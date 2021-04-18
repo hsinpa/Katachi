@@ -1,4 +1,4 @@
-import {CustomShaderProperties, VertexPointerConfig, GLAttrShaderPosition, GLUniformShaderPosition, ShaderConfigType} from './MaterialType';
+import {CustomShaderProperties, ShaderAttributConfigType, GLAttrShaderPosition, GLUniformShaderPosition, ShaderConfigType} from './MaterialTypes';
 
 type GLUniformFunction = (locationPoint : WebGLUniformLocation, dataset : any) => void;
 
@@ -26,19 +26,17 @@ class Material {
     }
     
     //Attribute
-    private PreloadAttributeProperties(gl : WebGLRenderingContext, properties : CustomShaderProperties) {
+    private PreloadAttributeProperties(gl : WebGLRenderingContext, properties : ShaderAttributConfigType) {
         Object.keys(properties).forEach(key => {
-
             var attributes = gl.getAttribLocation(this.glProgram, key);
-            let buffer = gl.createBuffer();;
+            let buffer = gl.createBuffer();
 
             //If this data won't change anymore, and data value is number array
-            if (properties[key].drawType == gl.STATIC_DRAW && properties[key].value != null) {
-                gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+            // if (properties[key].drawType == gl.STATIC_DRAW && properties[key].value != null) {
+            gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
 
-                gl.bufferData(gl.ARRAY_BUFFER, new Float32Array((properties[key].value as number[]) ), gl.STATIC_DRAW);
-            }
-
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array((properties[key].value as number[]) ), gl.STATIC_DRAW);
+            
             this.cacheAttrShaderPosition[key] = {position_id : attributes, buffer : buffer, vertexPointer : properties[key].vertexPointer};
         });
     }
@@ -55,18 +53,20 @@ class Material {
     }
 
     ExecuteAttributeProp(gl : WebGLRenderingContext, attribute_name : string, dynamicArray? : number[]) {
-        if (!this.HasOwnProperty(this.cacheAttrShaderPosition,attribute_name )) return;
+        if (!(attribute_name in this.cacheAttrShaderPosition)) return;
 
         let cacheAttr = this.cacheAttrShaderPosition[attribute_name];
 
         gl.enableVertexAttribArray(cacheAttr.position_id);   
 
         // Bind the position buffer.
-        gl.bindBuffer(gl.ARRAY_BUFFER, cacheAttr.position_id);
+        gl.bindBuffer(gl.ARRAY_BUFFER, cacheAttr.buffer);
 
         if (dynamicArray != null) {
             gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(dynamicArray), gl.DYNAMIC_DRAW);
         }
+
+        console.log(cacheAttr);
 
         // Tell the attribute how to get data out of positionBuffer (ARRAY_BUFFER)
         var size = cacheAttr.vertexPointer.size;          // 2 components per iteration
@@ -77,7 +77,6 @@ class Material {
         gl.vertexAttribPointer(cacheAttr.position_id, size, type, normalize, stride, offset)
     }
 
-    
     /**
      * https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/uniform
      * Uniform Function are too many, I will leave it for the user to decide which function to call
@@ -88,16 +87,10 @@ class Material {
      * @memberof Material
      */
     ExecuteUniformProp(attribute_name : string, dataset : any, uniformAction : GLUniformFunction) {
-        if (!this.HasOwnProperty(this.cacheUniformShaderPosition, attribute_name )) return;
-
+        if (!(attribute_name in this.cacheUniformShaderPosition)) return;
         let cacheUnifPoint = this.cacheUniformShaderPosition[attribute_name];
 
         uniformAction(cacheUnifPoint, dataset);
-    }
-
-    private HasOwnProperty<X extends {}, Y extends PropertyKey>
-    (obj: X, prop: Y): obj is X & Record<Y, unknown> {
-        return obj.hasOwnProperty(prop)
     }
 }
 

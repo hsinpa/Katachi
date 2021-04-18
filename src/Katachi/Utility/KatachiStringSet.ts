@@ -7,3 +7,17 @@ export let GLShaderIDs  =
 export let GLProgramIDs = {
     Standard : "glprogram@standard_material"
 }
+
+export let StandardShaderKey = {
+    a_vertex : "a_vertex",
+    a_color : "a_color",
+    a_normal : "a_normal",
+    a_uv : "a_uv",
+    u_time : "u_time",
+    u_mainColor : "u_mainColor"  
+}
+
+export let MeshIDs = {
+    Quad : "mesh@quad",
+    Box : "mesh@box"
+}

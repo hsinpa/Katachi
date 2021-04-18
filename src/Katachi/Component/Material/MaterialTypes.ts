@@ -11,11 +11,13 @@ export interface GLUniformShaderPosition {
 } 
 
 export interface CustomShaderProperties {
-    [id: string] : {
-        value : number[],
-        drawType : number // gl.STATIC_DRAW ...
-        vertexPointer : VertexPointerConfig
-    }
+    value : number[],
+    drawType : number // gl.STATIC_DRAW ...
+    vertexPointer : VertexPointerConfig
+}
+
+export interface ShaderAttributConfigType {
+    [id: string] : CustomShaderProperties
 }
 
 export interface VertexPointerConfig {
@@ -25,7 +27,13 @@ export interface VertexPointerConfig {
 }
 
 export interface ShaderConfigType {
-    attributes : CustomShaderProperties,
+    attributes : ShaderAttributConfigType,
     uniforms : string[],
     count : number
+}
+
+export let DefaultVertexShaderParameter = {
+    vertex : "a_vertex",
+    color : "a_color",
+    uv : "a_uv"
 }

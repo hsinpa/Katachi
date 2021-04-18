@@ -1,0 +1,8 @@
+{
+    "canvas_dom_query" : "#webgl_canvas",
+    "standard_vertex_shader" : "./glsl/standard_mat.vert",
+    "standard_fragment_shader" : "./glsl/standard_mat.frag",
+    "canvas_height" : 600,
+    "canvas_width" : 850,
+    "canvas_type" : 0
+}

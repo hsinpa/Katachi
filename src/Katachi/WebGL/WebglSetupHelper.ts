@@ -1,5 +1,5 @@
 import WebglResource from './WebglResource';
-import Material from './Component/Material';
+import Material from '../Component/Material/Material';
 class WebglSetupHelper {
     webglResource : WebglResource
 
@@ -28,6 +28,7 @@ class WebglSetupHelper {
         var program = gl.createProgram();
         gl.attachShader(program, vertShader);
         gl.attachShader(program, fragShader);
+
         gl.linkProgram(program);
 
         var success = gl.getProgramParameter(program, gl.LINK_STATUS);

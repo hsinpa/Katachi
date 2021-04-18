@@ -98,3 +98,9 @@ export function RoundToDecimal(value : number, decimal : number) {
     let d = Math.pow(10, decimal);
     return Math.round(value * d) / d;
 }
+
+export function RandomChar(N : number) {
+    var s = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+    return Array.apply(null, Array(N)).map(function() { return s.charAt(Math.floor(Math.random() * s.length)); }).join('');
+}

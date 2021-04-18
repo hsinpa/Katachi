@@ -11,4 +11,3 @@ export interface KatachiConfigJson {
     standard_vertex_shader : string;
     standard_fragment_shader : string;
 }
-
