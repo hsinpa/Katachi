@@ -1,6 +1,4 @@
-import {CustomShaderProperties, ShaderAttributConfigType, GLAttrShaderPosition, GLUniformShaderPosition, ShaderConfigType} from './MaterialTypes';
-
-type GLUniformFunction = (locationPoint : WebGLUniformLocation, dataset : any) => void;
+import {GLUniformFunction, ShaderAttributConfigType, GLAttrShaderPosition, GLUniformShaderPosition, ShaderConfigType} from './MaterialTypes';
 
 class Material {
     id : string;
@@ -46,9 +44,12 @@ class Material {
         let pCount = properties.length;
 
         for (let i = 0; i < pCount; i++) {
-            var uniform = gl.getUniformLocation(this.glProgram, properties[i]);
+            let uniform = (gl.getUniformLocation(this.glProgram, properties[i]));
 
-            this.cacheUniformShaderPosition[properties[i]] = uniform;
+            //Might be null, if frag shader didn't use this property at all
+            if (uniform != null) {
+                this.cacheUniformShaderPosition[properties[i]] = uniform;
+            }
         }
     }
 
@@ -65,8 +66,6 @@ class Material {
         if (dynamicArray != null) {
             gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(dynamicArray), gl.DYNAMIC_DRAW);
         }
-
-        console.log(cacheAttr);
 
         // Tell the attribute how to get data out of positionBuffer (ARRAY_BUFFER)
         var size = cacheAttr.vertexPointer.size;          // 2 components per iteration
@@ -86,7 +85,7 @@ class Material {
      * @returns
      * @memberof Material
      */
-    ExecuteUniformProp(attribute_name : string, dataset : any, uniformAction : GLUniformFunction) {
+    ExecuteUniformProp(attribute_name : string, dataset : any, uniformAction : any) {
         if (!(attribute_name in this.cacheUniformShaderPosition)) return;
         let cacheUnifPoint = this.cacheUniformShaderPosition[attribute_name];
 

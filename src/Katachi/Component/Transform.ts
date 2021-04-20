@@ -1,11 +1,11 @@
-import {Vec3} from '@thi.ng/vectors';
+import {mat4, vec3, vec4} from 'gl-matrix';
 
 class Transform {
-    public position : Vec3;
-    public rotation : Vec3;
-    public scale : Vec3;
+    public position : vec3;
+    public rotation : vec3;
+    public scale : vec3;
 
-    constructor(position : Vec3, rotation : Vec3, scale : Vec3) {
+    constructor(position : vec3, rotation : vec3, scale : vec3) {
         this.position = position;
         this.rotation = rotation;
         this.scale = scale;

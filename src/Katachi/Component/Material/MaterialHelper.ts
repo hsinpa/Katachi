@@ -1,5 +1,5 @@
 import Material from "./Material";
-import {ShaderConfigType} from "./MaterialTypes";
+import {ShaderConfigType, DefaultVertexShaderParameter} from "./MaterialTypes";
 
 
 export function GetDefaultMaterialConfig(gl : WebGLRenderingContext) {
@@ -10,13 +10,23 @@ export function GetDefaultMaterialConfig(gl : WebGLRenderingContext) {
                 drawType : WebGLRenderingContext.STATIC_DRAW,
                 vertexPointer : {size : 4, type : gl.FLOAT, normalize: false},
             },
-            // a_uv : {
-            //     value : [],
-            //     drawType : WebGLRenderingContext.STATIC_DRAW,
-            //     vertexPointer : {size : 2, type : gl.FLOAT, normalize: false},
-            // }
+            a_uv : {
+                value : [],
+                drawType : WebGLRenderingContext.STATIC_DRAW,
+                vertexPointer : {size : 2, type : gl.FLOAT, normalize: false},
+            },
+            a_color : {
+                value : [],
+                drawType : WebGLRenderingContext.STATIC_DRAW,
+                vertexPointer : {size : 4, type : gl.FLOAT, normalize: true},
+            },
+            a_normal : {
+                value : [],
+                drawType : WebGLRenderingContext.STATIC_DRAW,
+                vertexPointer : {size : 3, type : gl.FLOAT, normalize: true},
+            }
         },
-        uniforms : ["u_time", "u_mainColor"],
+        uniforms : [DefaultVertexShaderParameter.time, DefaultVertexShaderParameter.mainColor],
         count : 0
     }
 

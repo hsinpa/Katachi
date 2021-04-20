@@ -33,7 +33,24 @@ export interface ShaderConfigType {
 }
 
 export let DefaultVertexShaderParameter = {
+    //Attrib
     vertex : "a_vertex",
     color : "a_color",
-    uv : "a_uv"
+    uv : "a_uv",
+    normal : "a_normal",
+
+    //Uniform
+    time : "u_time",
+    mainColor : "u_mainColor"
 }
+
+export interface UniformProperties {
+    [id: string] : UniformAttrType
+}
+
+export interface UniformAttrType {
+    function : GLUniformFunction,
+    value : any
+}
+
+export type GLUniformFunction = (locationPoint : WebGLUniformLocation, dataset : any) => void;

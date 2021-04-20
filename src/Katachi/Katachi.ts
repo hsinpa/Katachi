@@ -9,6 +9,8 @@ import Mesh from './Component/Mesh/Mesh';
 import ShapeBuilder from './Component/ShapeBuilder';
 import Scene from './Component/Scene';
 
+export type UpdateLoopCallbackType = (timeinSecond : number) => void;
+
 class Katachi extends WebglCanvas {
     webglSetupHelper : WebglSetupHelper;
     webglResouceAlloc : WebglResource;
@@ -18,13 +20,19 @@ class Katachi extends WebglCanvas {
     shapeBuilder : ShapeBuilder;
     scene : Scene;
 
+    private previousTimeStamp : number;
+    public time : number;
+
+    private UpdateLoopCallback? : UpdateLoopCallbackType;
+
     public get isKatachiValid() {
         return this._gl != null;
     }
 
-    constructor(configJson : KatachiConfigJson) {
+    constructor(configJson : KatachiConfigJson, UpdateLoopCallback? : UpdateLoopCallbackType) {
         super(configJson);
 
+        this.UpdateLoopCallback = UpdateLoopCallback;
         this.webglResouceAlloc = new WebglResource();
         this.webglSetupHelper = new WebglSetupHelper(this.webglResouceAlloc);
 
@@ -39,11 +47,22 @@ class Katachi extends WebglCanvas {
         
         await this.materialManager.SetDefaultMaterial();
 
-
+        window.requestAnimationFrame(this.PerformGameLoop);
 
         return true;
     }
 
+    private PerformGameLoop(timeStamp : number) {
+        this.time = (timeStamp - this.previousTimeStamp) / 1000;
+        this.previousTimeStamp = timeStamp;
+
+        console.log(this.time);
+
+        if (this.UpdateLoopCallback != null)
+            this.UpdateLoopCallback(this.time);
+
+        window.requestAnimationFrame(this.PerformGameLoop);
+    }
 
     public DrawCanvas() {
         let gl = this._gl;
@@ -55,16 +74,14 @@ class Katachi extends WebglCanvas {
         let keys = Object.keys(this.scene.shapeArray);
         let keyLength = keys.length;
 
-        console.log(keyLength);
-
         for (let i = 0; i < keyLength; i++) {
             let shapeObject = this.scene.shapeArray[keys[i]];
 
             this._gl.useProgram(shapeObject.material.glProgram);
 
-            console.log(shapeObject.mesh.meshData);
+            shapeObject.ProcessMaterialAttr(this._gl);
+            shapeObject.ProcessMaterialUnifrom(this._gl, 0);
 
-            shapeObject.ProcessRendertimeMaterialAttr(this._gl);
 
             var primitiveType = gl.TRIANGLES;
             var offset = 0;

@@ -29,16 +29,6 @@ class MeshManager {
         return mesh;
     }
 
-    CreateMesh() {
-        let meshID = MeshIDs.Box;
-
-
-    }
-
-    CreateAndCacheMesh(mesh : Mesh) {
-
-    }
-
 }
 
 export default MeshManager;

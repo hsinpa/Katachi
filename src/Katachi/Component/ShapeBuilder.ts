@@ -7,9 +7,9 @@ import {GetDefaultMaterialConfig} from './Material/MaterialHelper';
 import Mesh from './Mesh/Mesh';
 import ShapeObject from './ShapeObject';
 import Transform from './Transform';
-import {Vec3, vec3} from '@thi.ng/vectors';
 import {GLProgramIDs} from '../Utility/KatachiStringSet';
 import {RandomChar} from '../Utility/UtilityMethod';
+import {vec3} from 'gl-matrix';
 
 class ShapeBuilder {
 
@@ -24,7 +24,10 @@ class ShapeBuilder {
     }
     
     Build(shapeName : string, mesh : Mesh, material : Material) : ShapeObject {
-        let transform = new Transform(Vec3.ZERO, Vec3.ZERO, Vec3.ONE);
+        let zeroVector = vec3.fromValues(0,0,0);
+        let oneVector = vec3.fromValues(1, 1, 1);
+
+        let transform = new Transform(zeroVector, zeroVector, oneVector);
         let shapeObject : ShapeObject = new ShapeObject(transform, mesh, material);
 
         shapeObject.name = shapeName;
@@ -32,7 +35,10 @@ class ShapeBuilder {
 
         let defaultMatConfig = GetDefaultMaterialConfig(this._gl);
         defaultMatConfig.attributes[DefaultVertexShaderParameter.vertex].value = mesh.meshData.vertex;
-        // defaultMatConfig.attributes[DefaultVertexShaderParameter.uv].value = mesh.meshData.uv;
+        defaultMatConfig.attributes[DefaultVertexShaderParameter.uv].value = mesh.meshData.uv;
+        defaultMatConfig.attributes[DefaultVertexShaderParameter.color].value = mesh.meshData.color;
+        defaultMatConfig.attributes[DefaultVertexShaderParameter.normal].value = mesh.meshData.normal;
+
         material.PreloadProperties(this._gl, defaultMatConfig);
 
         return shapeObject;

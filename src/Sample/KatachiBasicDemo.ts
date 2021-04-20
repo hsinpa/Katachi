@@ -6,10 +6,10 @@ class KatachiBasicDemo {
         let isKatachiAvailble = await katachi.SetUp();
 
         if (isKatachiAvailble) {
-
             let quadObj = katachi.shapeBuilder.BuildQuad();
+
             katachi.scene.InsertShapeObj(quadObj);
-            
+
             katachi.DrawCanvas();
         }
     }
