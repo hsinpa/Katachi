@@ -1,4 +1,3 @@
-import {Vec3} from '@thi.ng/vectors';
 import {MeshType} from '../MeshTypes';
 
 export default function CreateQuadMesh() : MeshType{
