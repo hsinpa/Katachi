@@ -9,6 +9,9 @@ varying vec2 v_uv;
 varying vec4 v_color;
 varying vec3 v_normal;
 
+uniform vec3 u_worldPosition;
+uniform mat4 u_viewMatrix;
+
 void main () {
 
   // v_uv = vec2( (a_position + 1.0 )* 0.5 ); // For Image processing effect
@@ -17,5 +20,5 @@ void main () {
   v_color = a_color;
   v_normal = a_normal;
   
-  gl_Position =  a_vertex;
+  gl_Position =  u_viewMatrix * a_vertex;
 }

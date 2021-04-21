@@ -7,3 +7,4 @@ export interface StringVector2 {
     x : string;
     y : string;
 }
+

@@ -1,4 +1,6 @@
-import ShapeObject from './ShapeObject';
+import { vec3 } from 'gl-matrix';
+import Camera from './Camera/Camera';
+import ShapeObject from './Shape/ShapeObject';
 
 interface ShapeArrayType {
     [id: string] : ShapeObject
@@ -7,12 +9,17 @@ interface ShapeArrayType {
 class Scene {
 
     private _shapeArray : ShapeArrayType;
+
+    public camera : Camera;
+
     public get shapeArray() {
         return this._shapeArray;
     }
 
     constructor() {
         this._shapeArray = {};
+
+        this.camera = new Camera();
     }
 
     public InsertShapeObj(shapeObject : ShapeObject) {

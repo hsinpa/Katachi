@@ -26,7 +26,8 @@ export function GetDefaultMaterialConfig(gl : WebGLRenderingContext) {
                 vertexPointer : {size : 3, type : gl.FLOAT, normalize: true},
             }
         },
-        uniforms : [DefaultVertexShaderParameter.time, DefaultVertexShaderParameter.mainColor],
+        uniforms : [DefaultVertexShaderParameter.time, DefaultVertexShaderParameter.mainColor,
+                     DefaultVertexShaderParameter.worldPosition, DefaultVertexShaderParameter.viewMatrix],
         count : 0
     }
 

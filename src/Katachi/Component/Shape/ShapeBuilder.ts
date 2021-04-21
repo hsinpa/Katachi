@@ -1,14 +1,14 @@
-import MaterialManager from './Material/MaterialManager';
-import MeshManager from './Mesh/MeshManager';
-import Material from './Material/Material';
-import {DefaultVertexShaderParameter} from './Material/MaterialTypes';
-import {GetDefaultMaterialConfig} from './Material/MaterialHelper';
+import MaterialManager from '../Material/MaterialManager';
+import MeshManager from '../Mesh/MeshManager';
+import Material from '../Material/Material';
+import {DefaultVertexShaderParameter} from '../Material/MaterialTypes';
+import {GetDefaultMaterialConfig} from '../Material/MaterialHelper';
 
-import Mesh from './Mesh/Mesh';
+import Mesh from '../Mesh/Mesh';
 import ShapeObject from './ShapeObject';
-import Transform from './Transform';
-import {GLProgramIDs} from '../Utility/KatachiStringSet';
-import {RandomChar} from '../Utility/UtilityMethod';
+import Transform from '../Transform';
+import {GLProgramIDs} from '../../Utility/KatachiStringSet';
+import {RandomChar} from '../../Utility/UtilityMethod';
 import {vec3} from 'gl-matrix';
 
 class ShapeBuilder {

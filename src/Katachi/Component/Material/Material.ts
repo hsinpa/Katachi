@@ -85,11 +85,14 @@ class Material {
      * @returns
      * @memberof Material
      */
-    ExecuteUniformProp(attribute_name : string, dataset : any, uniformAction : any) {
+    ExecuteUniformProp(attribute_name : string, dataset : any, uniformAction : any, isMatrixOperation = false) {
         if (!(attribute_name in this.cacheUniformShaderPosition)) return;
         let cacheUnifPoint = this.cacheUniformShaderPosition[attribute_name];
 
-        uniformAction(cacheUnifPoint, dataset);
+        if (isMatrixOperation)
+            uniformAction(cacheUnifPoint, dataset);
+        else
+            uniformAction(cacheUnifPoint, false, dataset)
     }
 }
 

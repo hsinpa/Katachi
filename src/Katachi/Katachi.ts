@@ -6,7 +6,7 @@ import WebglResource from './WebGL/WebglResource';
 import MaterialManager from './Component/Material/MaterialManager';
 import MeshManager from './Component/Mesh/MeshManager';
 import Mesh from './Component/Mesh/Mesh';
-import ShapeBuilder from './Component/ShapeBuilder';
+import ShapeBuilder from './Component/Shape/ShapeBuilder';
 import Scene from './Component/Scene';
 
 export type UpdateLoopCallbackType = (timeinSecond : number) => void;
@@ -20,7 +20,7 @@ class Katachi extends WebglCanvas {
     shapeBuilder : ShapeBuilder;
     scene : Scene;
 
-    private previousTimeStamp : number;
+    private previousTimeStamp : number = 0;
     public time : number;
 
     private UpdateLoopCallback? : UpdateLoopCallbackType;
@@ -29,10 +29,9 @@ class Katachi extends WebglCanvas {
         return this._gl != null;
     }
 
-    constructor(configJson : KatachiConfigJson, UpdateLoopCallback? : UpdateLoopCallbackType) {
+    constructor(configJson : KatachiConfigJson) {
         super(configJson);
 
-        this.UpdateLoopCallback = UpdateLoopCallback;
         this.webglResouceAlloc = new WebglResource();
         this.webglSetupHelper = new WebglSetupHelper(this.webglResouceAlloc);
 
@@ -42,26 +41,30 @@ class Katachi extends WebglCanvas {
         this.scene = new Scene();
     }
 
-    public async SetUp() {
+    public async SetUp(UpdateLoopCallback? : UpdateLoopCallbackType) {
         if (!this.isKatachiValid) return false;
         
+        this.UpdateLoopCallback = UpdateLoopCallback;
+
         await this.materialManager.SetDefaultMaterial();
 
-        window.requestAnimationFrame(this.PerformGameLoop);
+        window.requestAnimationFrame(this.PerformGameLoop.bind(this));
 
         return true;
     }
 
     private PerformGameLoop(timeStamp : number) {
-        this.time = (timeStamp - this.previousTimeStamp) / 1000;
+        let ms =  (timeStamp - this.previousTimeStamp) / 1000;
+        this.time = (timeStamp) / 1000;
         this.previousTimeStamp = timeStamp;
-
-        console.log(this.time);
 
         if (this.UpdateLoopCallback != null)
             this.UpdateLoopCallback(this.time);
 
-        window.requestAnimationFrame(this.PerformGameLoop);
+
+        this.DrawCanvas();
+
+        window.requestAnimationFrame(this.PerformGameLoop.bind(this));
     }
 
     public DrawCanvas() {
@@ -80,8 +83,7 @@ class Katachi extends WebglCanvas {
             this._gl.useProgram(shapeObject.material.glProgram);
 
             shapeObject.ProcessMaterialAttr(this._gl);
-            shapeObject.ProcessMaterialUnifrom(this._gl, 0);
-
+            shapeObject.ProcessMaterialUnifrom(this._gl, this.time, this.scene.camera);
 
             var primitiveType = gl.TRIANGLES;
             var offset = 0;

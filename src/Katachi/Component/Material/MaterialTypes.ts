@@ -41,7 +41,9 @@ export let DefaultVertexShaderParameter = {
 
     //Uniform
     time : "u_time",
-    mainColor : "u_mainColor"
+    mainColor : "u_mainColor",
+    worldPosition : "u_worldPosition",
+    viewMatrix : "u_viewMatrix"
 }
 
 export interface UniformProperties {
@@ -50,6 +52,7 @@ export interface UniformProperties {
 
 export interface UniformAttrType {
     function : GLUniformFunction,
+    isMatrix : boolean,
     value : any
 }
 
