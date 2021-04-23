@@ -71,8 +71,11 @@ class Katachi extends WebglCanvas {
         let gl = this._gl;
         gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
+        this.scene.camera.SetCanvasWidthHeight(gl.canvas.width, gl.canvas.height);
+
         gl.clearColor(0, 0, 0, 0);
-        gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.enable(gl.DEPTH_TEST);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
         let keys = Object.keys(this.scene.shapeArray);
         let keyLength = keys.length;
@@ -82,8 +85,10 @@ class Katachi extends WebglCanvas {
 
             this._gl.useProgram(shapeObject.material.glProgram);
 
+            const mvpMatrix = shapeObject.GetMVPMatrix(this.scene.camera.viewMatrix, this.scene.camera.projectionMatrix);
+
             shapeObject.ProcessMaterialAttr(this._gl);
-            shapeObject.ProcessMaterialUnifrom(this._gl, this.time, this.scene.camera);
+            shapeObject.ProcessMaterialUnifrom(this._gl, this.time, mvpMatrix);
 
             var primitiveType = gl.TRIANGLES;
             var offset = 0;

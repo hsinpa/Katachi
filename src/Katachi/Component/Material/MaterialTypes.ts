@@ -32,7 +32,7 @@ export interface ShaderConfigType {
     count : number
 }
 
-export let DefaultVertexShaderParameter = {
+export const DefaultVertexShaderParameter = {
     //Attrib
     vertex : "a_vertex",
     color : "a_color",
@@ -43,7 +43,7 @@ export let DefaultVertexShaderParameter = {
     time : "u_time",
     mainColor : "u_mainColor",
     worldPosition : "u_worldPosition",
-    viewMatrix : "u_viewMatrix"
+    modelViewProjectionMatrix : "u_MVPMatrix"
 }
 
 export interface UniformProperties {

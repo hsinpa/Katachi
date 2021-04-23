@@ -11,6 +11,7 @@ class WebglCanvas {
 
         this._canvasDom = document.querySelector(configJson.canvas_dom_query);
         this._gl = this._canvasDom.getContext('webgl');
+        this._gl.enable(this._gl.DEPTH_TEST);
     }
 }
 

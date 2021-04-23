@@ -19,12 +19,12 @@ class KatachiBasicDemo {
 
             katachi.DrawCanvas();
         }
+            
     }
 
     UpdateLoop(timeSecond : number) {
         if (this.katachi == null|| this.mainQuad == null) return;
         
-        this.katachi.scene.camera.transform.position[0] = timeSecond * 0.01;
     }
 }
 

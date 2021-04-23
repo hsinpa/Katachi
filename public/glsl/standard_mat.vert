@@ -10,7 +10,7 @@ varying vec4 v_color;
 varying vec3 v_normal;
 
 uniform vec3 u_worldPosition;
-uniform mat4 u_viewMatrix;
+uniform mat4 u_MVPMatrix;
 
 void main () {
 
@@ -20,5 +20,5 @@ void main () {
   v_color = a_color;
   v_normal = a_normal;
   
-  gl_Position =  u_viewMatrix * a_vertex;
+  gl_Position =  u_MVPMatrix * a_vertex;
 }

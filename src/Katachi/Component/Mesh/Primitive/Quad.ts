@@ -12,11 +12,11 @@ export default function CreateQuadMesh() : MeshType{
 
 function GetQuadVertex() : number[] {
     return [-1, -1, 0 ,1,
-        -1, 1, 0 ,1,
+        -1, 1, -0 ,1,
         1, -1, 0, 1,
         1, -1, 0, 1,
         -1, 1, 0, 1,
-        1, 1, 0 , 1];
+        1, 1, 0, 1];
 }
 
 function GetQuadUV() : number[] {
