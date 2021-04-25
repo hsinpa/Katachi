@@ -5,7 +5,27 @@
 </head>
 <body>
 
-    <canvas id="webgl_canvas" width="512" height="256"></canvas>
+    <canvas id="webgl_canvas" width="720" height="720"></canvas>
+
+    <div id="webgl_contorlpanel">
+        <h2>Control Panel</h2>
+        <div class="c_camera">
+            <h3>Camera</h3>
+
+            <label name="strength">Mouse Sensitity</label><br>
+            <input type="range" min="0" max="1" step="0.05" value="0.5" name="mouse_sensitivity">
+            <br>
+
+            <label name="strength">Field of view (60)</label><br>
+            <input type="range" min="0" max="180" step="1" value="60" name="camera_fov">
+            <br>
+
+            <label>Projection (Orthographic / Perspective)</label>
+            <input type="checkbox" name="projection" value="1">
+            <br>
+        </div>
+
+    </div>
 
     <script type="module" src="./dist/index.js"></script>
 </body>

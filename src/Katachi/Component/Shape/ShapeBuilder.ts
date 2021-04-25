@@ -6,7 +6,7 @@ import {GetDefaultMaterialConfig} from '../Material/MaterialHelper';
 
 import Mesh from '../Mesh/Mesh';
 import ShapeObject from './ShapeObject';
-import Transform from '../Transform';
+import Transform from '../Transform/Transform';
 import {GLProgramIDs} from '../../Utility/KatachiStringSet';
 import {RandomChar} from '../../Utility/UtilityMethod';
 import {vec3} from 'gl-matrix';
@@ -24,10 +24,7 @@ class ShapeBuilder {
     }
     
     Build(shapeName : string, mesh : Mesh, material : Material) : ShapeObject {
-        let zeroVector = vec3.fromValues(0,0,0);
-        let oneVector = vec3.fromValues(1, 1, 1);
-
-        let transform = new Transform(zeroVector, zeroVector, oneVector);
+        let transform = new Transform(vec3.create(), vec3.create(), vec3.fromValues(1, 1, 1));
         let shapeObject : ShapeObject = new ShapeObject(transform, mesh, material);
 
         shapeObject.name = shapeName;

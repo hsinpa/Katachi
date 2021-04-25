@@ -1,4 +1,4 @@
-import Transform from '../Transform';
+import Transform from '../Transform/Transform';
 import Mesh from '../Mesh/Mesh';
 import Material from '../Material/Material';
 import {DefaultVertexShaderParameter, UniformProperties} from '../Material/MaterialTypes'

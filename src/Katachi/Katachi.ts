@@ -74,7 +74,6 @@ class Katachi extends WebglCanvas {
         this.scene.camera.SetCanvasWidthHeight(gl.canvas.width, gl.canvas.height);
 
         gl.clearColor(0, 0, 0, 0);
-        gl.enable(gl.DEPTH_TEST);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
         let keys = Object.keys(this.scene.shapeArray);
