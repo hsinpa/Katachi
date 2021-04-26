@@ -47,6 +47,13 @@ class ShapeBuilder {
         
         return this.Build("Quad", mesh, material);
     }
+
+    BuildCube() : ShapeObject {
+        let mesh = this._meshManager.CreateCube();
+        let material = this._materialManager.GetMaterial(GLProgramIDs.Standard);
+        
+        return this.Build("Cube", mesh, material);
+    }
 }
 
 export default ShapeBuilder;

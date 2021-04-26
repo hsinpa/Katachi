@@ -20,7 +20,7 @@ class Camera extends ObjectInterface{
     public nearClipPoint : number = 0.3;
 
     private aspectRatio : number;
-    private _foxy : number = 120;
+    private _foxy : number = 60;
     private lookUpPoint : vec3;
 
 
@@ -35,7 +35,7 @@ class Camera extends ObjectInterface{
 
     public get viewMatrix() {
 
-        //vec3.add(this.lookUpPoint, this.transform.position, this.transform.forward);
+        vec3.add(this.lookUpPoint, this.transform.position, this.transform.forward);
         //console.log(this.lookUpPoint);
         return mat4.lookAt(this._viewMatrix, this.transform.position, this.lookUpPoint, this.upDirMatrix);
     }

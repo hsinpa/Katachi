@@ -1,10 +1,16 @@
 import Mesh from './Mesh';
-import Quad from './Primitive/Quad'
+import Quad from './Primitive/Quad';
+import Cube from './Primitive/Cube';
 import {MeshIDs} from '../../Utility/KatachiStringSet'
+import { MeshType } from './MeshTypes';
 
 interface MeshCacheType {
     [id: string] : Mesh
 } 
+
+interface GetMeshFunc {
+    () : MeshType
+};
 
 class MeshManager {
     
@@ -15,16 +21,22 @@ class MeshManager {
     }
 
     CreateQuad() {
-        let meshID = MeshIDs.Quad;
-        
-        if (meshID in this.meshCache) {
-            return this.meshCache[meshID];
+        return this.CreateAndCacehMeshType(MeshIDs.Quad, Quad);
+    }
+
+    CreateCube() {
+        return this.CreateAndCacehMeshType(MeshIDs.Cube, Cube);
+    }
+
+    private CreateAndCacehMeshType(id : string, meshFunc : GetMeshFunc) {
+        if (id in this.meshCache) {
+            return this.meshCache[id];
         }
 
-        let meshDataset = Quad();
+        let meshDataset = meshFunc();
         let mesh = new Mesh(meshDataset);
 
-        this.meshCache[meshID] = mesh;
+        this.meshCache[id] = mesh;
 
         return mesh;
     }

@@ -19,5 +19,5 @@ export let StandardShaderKey = {
 
 export let MeshIDs = {
     Quad : "mesh@quad",
-    Box : "mesh@box"
+    Cube : "mesh@cube"
 }

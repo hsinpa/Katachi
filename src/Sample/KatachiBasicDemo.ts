@@ -8,6 +8,7 @@ import InputHandler, { InputMovementType } from './Input/InputHandler';
 class KatachiBasicDemo {
     private katachi : Katachi;
     private mainQuad : ShapeObject;
+    private mainCube : ShapeObject;
 
     private inputHandler : InputHandler
     private katachiIsReady: boolean;
@@ -28,11 +29,17 @@ class KatachiBasicDemo {
 
             this.katachi.scene.camera.projectionType = ProjectionType.Perspective;
             this.mainQuad = katachi.shapeBuilder.BuildQuad();
+            this.mainCube = katachi.shapeBuilder.BuildCube();
 
             this.mainQuad.Scale(0.2);
-            this.mainQuad.transform.position[2] = -0;
+            this.mainQuad.transform.position[2] = -1;
+            this.mainQuad.transform.position[0] = -1.2;
+
+            this.mainCube.Scale(0.5);
+            this.mainCube.transform.position[2] = -2;
 
             katachi.scene.InsertShapeObj(this.mainQuad);
+            katachi.scene.InsertShapeObj(this.mainCube);
 
             katachi.DrawCanvas();
         }
@@ -48,15 +55,15 @@ class KatachiBasicDemo {
     OnMouseEvent(moveDelta : number[]) {
 
 
-        // this.katachi.scene.camera.transform.rotation[0] += moveDelta[0] * 0.02 * 0.5;
-        // this.katachi.scene.camera.transform.rotation[1] += -moveDelta[1] * 0.02 * 0.5;
+        this.katachi.scene.camera.transform.rotation[0] += moveDelta[0] * 0.02 * 0.5;
+        this.katachi.scene.camera.transform.rotation[1] += -moveDelta[1] * 0.02 * 0.5;
 
-        // let rightAngleRadian = 0.5 * Math.PI;
+        let rightAngleRadian = 0.5 * Math.PI;
 
-        // if(this.katachi.scene.camera.transform.rotation[1] > rightAngleRadian)
-        //     this.katachi.scene.camera.transform.rotation[1] =  rightAngleRadian;
-        // if(this.katachi.scene.camera.transform.rotation[1] < -rightAngleRadian)
-        //     this.katachi.scene.camera.transform.rotation[1] = -rightAngleRadian;
+        if(this.katachi.scene.camera.transform.rotation[1] > rightAngleRadian)
+            this.katachi.scene.camera.transform.rotation[1] =  rightAngleRadian;
+        if(this.katachi.scene.camera.transform.rotation[1] < -rightAngleRadian)
+            this.katachi.scene.camera.transform.rotation[1] = -rightAngleRadian;
               //console.log(this.katachi.scene.camera.transform.rotation[0]);
 
         //this.mainQuad.transform.rotation[1] += -moveDelta[1] * 0.02;
@@ -66,11 +73,11 @@ class KatachiBasicDemo {
         if (this.katachi == null|| this.mainQuad == null) return;
         //this.mainQuad.transform.rotation[0] += timeSecond * 0.02;
 
-        let camX = Math.sin(timeSecond) * 2;
-        let camZ = Math.cos(timeSecond) * 2;
+        // let camX = Math.sin(timeSecond) * 2;
+        // let camZ = Math.cos(timeSecond) * 2;
 
-        this.katachi.scene.camera.transform.position[0] =camX;
-        this.katachi.scene.camera.transform.position[2] =camZ;
+        // this.katachi.scene.camera.transform.position[0] =camX;
+        // this.katachi.scene.camera.transform.position[2] =camZ;
 
     }
 }
