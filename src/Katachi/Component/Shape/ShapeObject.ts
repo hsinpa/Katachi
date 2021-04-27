@@ -38,9 +38,7 @@ class ShapeObject extends ObjectInterface {
     }
 
     SetCustomUniformAttr(material_name : string, matUniformAttributes : UniformAttrType) {
-        if (material_name in this.matUniformAttributes) {
-            this.matUniformAttributes[material_name] = matUniformAttributes;
-        }
+        this.matUniformAttributes[material_name] = matUniformAttributes;
     }
 
     /**

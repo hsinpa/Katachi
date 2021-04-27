@@ -42,7 +42,7 @@ class KatachiBasicDemo {
             katachi.scene.InsertShapeObj(this.mainQuad);
             katachi.scene.InsertShapeObj(this.mainCube);
 
-            katachi.DrawCanvas();
+            this.SetMaterialTexture(this.mainCube, "./texture/BrickTex_256.jpg");
         }
     }
 
@@ -78,8 +78,19 @@ class KatachiBasicDemo {
 
         // this.katachi.scene.camera.transform.position[0] =camX;
         // this.katachi.scene.camera.transform.position[2] =camZ;
-
     }
+
+    SetMaterialTexture(shapeObject : ShapeObject, texturePath : string) {
+
+        shapeObject.SetCustomUniformAttr("u_mainTex", {
+            isMatrix : false,
+            texture : 1,
+            value : texturePath,
+            function : this.katachi.webglContext.uniform1i
+        });
+    }
+
+
 }
 
 export default KatachiBasicDemo;

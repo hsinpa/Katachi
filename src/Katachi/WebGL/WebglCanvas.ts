@@ -2,9 +2,13 @@ import {KatachiConfigJson} from './WebglType';
 
 class WebglCanvas {
 
-    protected _gl : WebGLRenderingContext;
+    protected readonly _gl : WebGLRenderingContext;
     protected _configJson : KatachiConfigJson;
     protected _canvasDom : HTMLCanvasElement;
+
+    public get webglContext() {
+        return this._gl;
+    } 
 
     constructor(configJson : KatachiConfigJson) {
         this._configJson = configJson;

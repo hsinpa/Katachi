@@ -100,17 +100,15 @@ class Material {
     }
 
     async ExecuteUniformTex(gl : WebGLRenderingContext, uniform_name : string, uniProperty : UniformAttrType, callback : Promise<HTMLImageElement>) {
+        
         if (!(uniform_name in this.cacheUniformShaderPosition)) return;
 
-        let texture : WebGLTexture;
-        if ( !(uniform_name in this.glTextureCache))
-            texture = gl.createTexture();
-        else
-            texture = this.glTextureCache[uniform_name];
+        if ( (uniform_name in this.glTextureCache)) return;
+        let texture = gl.createTexture();
 
 
         let cacheUnifPoint = this.cacheUniformShaderPosition[uniform_name];
-
+        
         let loadedTexture = await callback;
 
         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
@@ -124,6 +122,8 @@ class Material {
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, loadedTexture);
 
         gl.uniform1i(cacheUnifPoint, uniProperty.texture - 1);
+
+        this.glTextureCache[uniform_name] = texture;
     }
 }
 
