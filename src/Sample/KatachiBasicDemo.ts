@@ -4,6 +4,7 @@ import ShapeObject from '../Katachi/Component/Shape/ShapeObject';
 import {vec2, vec3} from 'gl-matrix';
 import Camera, { ProjectionType } from '../Katachi/Component/Camera/Camera';
 import InputHandler, { InputMovementType } from './Input/InputHandler';
+import {DeltaTime} from './StaticValues'
 
 class KatachiBasicDemo {
     private katachi : Katachi;
@@ -48,15 +49,14 @@ class KatachiBasicDemo {
     OnMovementEvent(direction : vec2) {
         if (!this.katachiIsReady) return; 
         let deltaTime = 0.02 ;
-
-        this.katachi.scene.camera.Translate(direction[0] * deltaTime, 0, direction[1] * deltaTime);
+        let speed = deltaTime * 0.5;
+        this.katachi.scene.camera.Translate(-direction[0] * speed, 0, direction[1] * speed);
     }
 
     OnMouseEvent(moveDelta : number[]) {
-
-
-        this.katachi.scene.camera.transform.rotation[0] += moveDelta[0] * 0.02 * 0.5;
-        this.katachi.scene.camera.transform.rotation[1] += -moveDelta[1] * 0.02 * 0.5;
+        const mouseSpeed = 0.3;
+        this.katachi.scene.camera.transform.rotation[0] += moveDelta[0] * DeltaTime * mouseSpeed;
+        this.katachi.scene.camera.transform.rotation[1] += -moveDelta[1] * DeltaTime * mouseSpeed;
 
         let rightAngleRadian = 0.5 * Math.PI;
 

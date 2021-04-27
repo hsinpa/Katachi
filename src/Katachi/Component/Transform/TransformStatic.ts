@@ -1,7 +1,18 @@
 import { vec3 } from "gl-matrix";
 
+type VectorStaticType = {
+    readonly top : vec3,
+    readonly right : vec3,
+    readonly forward : vec3,
+}
 
-export const Vector = {
+export type VectorType = {
+    top : vec3,
+    right : vec3,
+    forward : vec3,
+}
+
+export const Vector : VectorStaticType = {
     top : vec3.fromValues(0,1,0),
     right : vec3.fromValues(1, 0,0),
     forward : vec3.fromValues(0, 0, 1)

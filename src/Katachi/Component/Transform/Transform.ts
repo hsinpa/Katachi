@@ -1,5 +1,6 @@
 import {mat4, quat, vec3, vec4} from 'gl-matrix';
 import {Vector} from './TransformStatic';
+import TransformVector from './TransformVector'
 
 class Transform {
     public position : vec3;
@@ -15,15 +16,7 @@ class Transform {
         return mat4.fromRotationTranslationScale(this._modelMatrix,this.quaterion, this.position, this.scale);
     }
 
-    private _forward : vec3;
-
-    public get forward() {
-        this._forward[0] = Math.cos(this.rotation[0]) * Math.cos(this.rotation[1]);
-        this._forward[1] = Math.sin(this.rotation[1]);
-        this._forward[2] = Math.sin(this.rotation[0]) * Math.cos(this.rotation[1]);
-
-        return this._forward;
-    }
+    public transformVector : TransformVector;
 
     constructor(position : vec3, rotation : vec3, scale : vec3) {
         this.position = position;
@@ -32,7 +25,7 @@ class Transform {
         
         this.quaterion = quat.create();
         this._modelMatrix = mat4.create();
-        this._forward = vec3.create();
+        this.transformVector = new TransformVector();
     }
 }
 

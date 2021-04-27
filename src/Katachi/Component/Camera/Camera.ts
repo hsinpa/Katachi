@@ -34,8 +34,9 @@ class Camera extends ObjectInterface{
     }
 
     public get viewMatrix() {
+        let v = this.transform.transformVector.UpdateTransformVector(this.transform.rotation);
 
-        vec3.add(this.lookUpPoint, this.transform.position, this.transform.forward);
+        vec3.add(this.lookUpPoint, this.transform.position, v.forward);
         //console.log(this.lookUpPoint);
         return mat4.lookAt(this._viewMatrix, this.transform.position, this.lookUpPoint, this.upDirMatrix);
     }

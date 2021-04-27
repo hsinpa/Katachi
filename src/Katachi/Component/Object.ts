@@ -6,6 +6,11 @@ export default class ObjectBase {
     name : string = "NoName";
     transform : Transform;
 
+    private translateVector : vec3 = vec3.create();
+    private translateVectorX : vec3 = vec3.create();
+    private translateVectorY : vec3 = vec3.create();
+    private translateVectorZ : vec3 = vec3.create();
+
     constructor() {
         this.transform = CreateEmptyTransform();
     }
@@ -19,8 +24,15 @@ export default class ObjectBase {
     }
 
     Translate(x : number, y : number, z : number) {
-        this.transform.position[0] += this.transform.forward[0] * x;
-        this.transform.position[1] += this.transform.forward[1] * y;
-        this.transform.position[2] += this.transform.forward[2] * z;
+        let transformVector = this.transform.transformVector.UpdateTransformVector(this.transform.rotation);
+
+        vec3.scale(this.translateVectorX, transformVector.right, x);
+        vec3.scale(this.translateVectorY, transformVector.top, y);
+        vec3.scale(this.translateVectorZ, transformVector.forward, z);
+
+        vec3.add(this.translateVector, this.translateVectorX, this.translateVectorY);
+        vec3.add(this.translateVector, this.translateVector, this.translateVectorZ);
+
+        vec3.add(this.transform.position, this.transform.position, this.translateVector);
     }
 }

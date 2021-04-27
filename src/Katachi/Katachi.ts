@@ -8,6 +8,8 @@ import MeshManager from './Component/Mesh/MeshManager';
 import Mesh from './Component/Mesh/Mesh';
 import ShapeBuilder from './Component/Shape/ShapeBuilder';
 import Scene from './Component/Scene';
+import { mat4 } from 'gl-matrix';
+import ShapeObject from './Component/Shape/ShapeObject';
 
 export type UpdateLoopCallbackType = (timeinSecond : number) => void;
 
@@ -76,25 +78,28 @@ class Katachi extends WebglCanvas {
         gl.clearColor(0, 0, 0, 0);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-        let keys = Object.keys(this.scene.shapeArray);
-        let keyLength = keys.length;
+        let cameraViewMatrix = this.scene.camera.viewMatrix;
+        let cameraProjectionMatrix = this.scene.camera.projectionMatrix;
 
-        for (let i = 0; i < keyLength; i++) {
-            let shapeObject = this.scene.shapeArray[keys[i]];
+        for (var shapeID in this.scene.shapeArray) {
+            let shapeObject = this.scene.shapeArray[shapeID];
+            this.ProcessShapeObject(shapeObject, cameraViewMatrix, cameraProjectionMatrix);
+        }       
+    }
 
-            this._gl.useProgram(shapeObject.material.glProgram);
+    private ProcessShapeObject( shapeObject : ShapeObject, viewMatrix : mat4, projectionMatrix : mat4) {
+        this._gl.useProgram(shapeObject.material.glProgram);
 
-            const mvpMatrix = shapeObject.GetMVPMatrix(this.scene.camera.viewMatrix, this.scene.camera.projectionMatrix);
+        const mvpMatrix = shapeObject.GetMVPMatrix(viewMatrix, projectionMatrix);
 
-            shapeObject.ProcessMaterialAttr(this._gl);
-            shapeObject.ProcessMaterialUnifrom(this._gl, this.time, mvpMatrix);
+        shapeObject.ProcessMaterialAttr(this._gl);
+        shapeObject.ProcessMaterialUnifrom(this._gl, this.webglResouceAlloc, this.time, mvpMatrix);
 
-            var primitiveType = gl.TRIANGLES;
-            var offset = 0;
-            var count = shapeObject.mesh.vertCount;
+        var primitiveType = this._gl.TRIANGLES;
+        var offset = 0;
+        var count = shapeObject.mesh.vertCount;
 
-            gl.drawArrays(primitiveType, offset, count);
-        }        
+        this._gl.drawArrays(primitiveType, offset, count);
     }
 }
 

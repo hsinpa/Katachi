@@ -26,10 +26,25 @@ export function GetDefaultMaterialConfig(gl : WebGLRenderingContext) {
                 vertexPointer : {size : 3, type : gl.FLOAT, normalize: true},
             }
         },
-        uniforms : [DefaultVertexShaderParameter.time, DefaultVertexShaderParameter.mainColor,
+        uniforms : [DefaultVertexShaderParameter.time, DefaultVertexShaderParameter.mainColor, DefaultVertexShaderParameter.mainTex,
                      DefaultVertexShaderParameter.worldPosition, DefaultVertexShaderParameter.modelViewProjectionMatrix],
         count : 0
     }
 
     return config;
+}
+
+export function GetGLTexture(gl : WebGLRenderingContext, textureSequence : number) : number {
+    switch(textureSequence) {
+        case 1 :
+            return gl.TEXTURE0
+        case 2 :
+            return gl.TEXTURE1
+        case 3 :
+            return gl.TEXTURE2
+        case 4 :
+            return gl.TEXTURE3
+
+        return gl.TEXTURE4;
+    }
 }

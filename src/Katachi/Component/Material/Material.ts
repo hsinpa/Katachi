@@ -1,4 +1,5 @@
-import {GLUniformFunction, ShaderAttributConfigType, GLAttrShaderPosition, GLUniformShaderPosition, ShaderConfigType} from './MaterialTypes';
+import {GLUniformFunction, ShaderAttributConfigType, GLAttrShaderPosition, GLUniformShaderPosition, ShaderConfigType, GLUniformTextures, UniformProperties, UniformAttrType} from './MaterialTypes';
+import {GetGLTexture} from './MaterialHelper';
 
 class Material {
     id : string;
@@ -9,6 +10,8 @@ class Material {
     cacheAttrShaderPosition : GLAttrShaderPosition;
     cacheUniformShaderPosition : GLUniformShaderPosition;
 
+    glTextureCache : GLUniformTextures;
+
     constructor(material_id : string, glProgram : WebGLProgram, vertexShader : WebGLShader, fragmentShader : WebGLShader) {
         this.id = material_id;
         this.glProgram = glProgram;
@@ -16,6 +19,7 @@ class Material {
         this.vertexShader = vertexShader;
         this.cacheAttrShaderPosition = {};
         this.cacheUniformShaderPosition = {};
+        this.glTextureCache = {};
     }
 
     PreloadProperties(gl : WebGLRenderingContext, config : ShaderConfigType) {
@@ -89,10 +93,37 @@ class Material {
         if (!(attribute_name in this.cacheUniformShaderPosition)) return;
         let cacheUnifPoint = this.cacheUniformShaderPosition[attribute_name];
 
-        if (isMatrixOperation)
+        if (!isMatrixOperation)
             uniformAction(cacheUnifPoint, dataset);
         else
             uniformAction(cacheUnifPoint, false, dataset)
+    }
+
+    async ExecuteUniformTex(gl : WebGLRenderingContext, uniform_name : string, uniProperty : UniformAttrType, callback : Promise<HTMLImageElement>) {
+        if (!(uniform_name in this.cacheUniformShaderPosition)) return;
+
+        let texture : WebGLTexture;
+        if ( !(uniform_name in this.glTextureCache))
+            texture = gl.createTexture();
+        else
+            texture = this.glTextureCache[uniform_name];
+
+
+        let cacheUnifPoint = this.cacheUniformShaderPosition[uniform_name];
+
+        let loadedTexture = await callback;
+
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+
+        gl.activeTexture(GetGLTexture(gl, uniProperty.texture));
+
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, loadedTexture);
+
+        gl.uniform1i(cacheUnifPoint, uniProperty.texture - 1);
     }
 }
 

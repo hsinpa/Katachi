@@ -10,6 +10,10 @@ export interface GLUniformShaderPosition {
     [id: string] : WebGLUniformLocation
 } 
 
+export interface GLUniformTextures {
+    [id: string] : WebGLTexture
+} 
+
 export interface CustomShaderProperties {
     value : number[],
     drawType : number // gl.STATIC_DRAW ...
@@ -42,6 +46,7 @@ export const DefaultVertexShaderParameter = {
     //Uniform
     time : "u_time",
     mainColor : "u_mainColor",
+    mainTex : "u_mainTex",
     worldPosition : "u_worldPosition",
     modelViewProjectionMatrix : "u_MVPMatrix"
 }
@@ -53,6 +58,7 @@ export interface UniformProperties {
 export interface UniformAttrType {
     function : GLUniformFunction,
     isMatrix : boolean,
+    texture : number, // Default 0 == No Texture
     value : any
 }
 

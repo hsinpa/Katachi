@@ -1,10 +1,11 @@
 import Transform from '../Transform/Transform';
 import Mesh from '../Mesh/Mesh';
 import Material from '../Material/Material';
-import {DefaultVertexShaderParameter, UniformProperties} from '../Material/MaterialTypes'
+import {DefaultVertexShaderParameter, UniformProperties, UniformAttrType, GLUniformTextures} from '../Material/MaterialTypes'
 import ObjectInterface from '../Object';
 import Camera from '../Camera/Camera';
 import { mat4 } from 'gl-matrix';
+import WebglResource from '../../WebGL/WebglResource';
 
 class ShapeObject extends ObjectInterface {    
     mesh : Mesh;
@@ -32,8 +33,14 @@ class ShapeObject extends ObjectInterface {
         this.material = material;
     }
 
-    SetCustomUniformAttr(matUniformAttributes : UniformProperties) {
+    SetCustomUniformAttrs(matUniformAttributes : UniformProperties) {
         this.matUniformAttributes = matUniformAttributes;
+    }
+
+    SetCustomUniformAttr(material_name : string, matUniformAttributes : UniformAttrType) {
+        if (material_name in this.matUniformAttributes) {
+            this.matUniformAttributes[material_name] = matUniformAttributes;
+        }
     }
 
     /**
@@ -58,15 +65,20 @@ class ShapeObject extends ObjectInterface {
         this.material.ExecuteAttributeProp(gl, DefaultVertexShaderParameter.normal );    
     }
 
-    ProcessMaterialUnifrom(gl : WebGLRenderingContext, time : number, mvpMatrix : mat4) {
+    ProcessMaterialUnifrom(gl : WebGLRenderingContext, resources : WebglResource, time : number, mvpMatrix : mat4) {
         //Default System attr, color and time
         this.material.ExecuteUniformProp(DefaultVertexShaderParameter.time, time, gl.uniform1f.bind(gl));
         this.material.ExecuteUniformProp(DefaultVertexShaderParameter.worldPosition, this.transform.position, gl.uniform3fv.bind(gl));
-        this.material.ExecuteUniformProp(DefaultVertexShaderParameter.modelViewProjectionMatrix, mvpMatrix, gl.uniformMatrix4fv.bind(gl));
+        this.material.ExecuteUniformProp(DefaultVertexShaderParameter.modelViewProjectionMatrix, mvpMatrix, gl.uniformMatrix4fv.bind(gl), true);
 
         //Custom uniform, define by external user
         Object.keys(this.matUniformAttributes).forEach(key => {
-            this.material.ExecuteUniformProp(key, this.matUniformAttributes[key].value, this.matUniformAttributes[key].function.bind(gl));
+
+            if (this.matUniformAttributes[key].texture > 0) {
+                this.material.ExecuteUniformTex(gl, key, this.matUniformAttributes[key], resources.GetImage(this.matUniformAttributes[key].value));
+            } else {
+                this.material.ExecuteUniformProp(key, this.matUniformAttributes[key].value, this.matUniformAttributes[key].function.bind(gl), this.matUniformAttributes[key].isMatrix);
+            }
         });
     }
 
