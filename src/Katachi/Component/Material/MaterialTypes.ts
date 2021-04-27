@@ -11,7 +11,10 @@ export interface GLUniformShaderPosition {
 } 
 
 export interface GLUniformTextures {
-    [id: string] : WebGLTexture
+    [id: string] : {
+        texture : WebGLTexture,
+        path : string
+    }
 } 
 
 export interface CustomShaderProperties {

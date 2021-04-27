@@ -103,9 +103,15 @@ class Material {
         
         if (!(uniform_name in this.cacheUniformShaderPosition)) return;
 
-        if ( (uniform_name in this.glTextureCache)) return;
-        let texture = gl.createTexture();
+        //If texture path is not update, then ignore
+        if ( (uniform_name in this.glTextureCache) && this.glTextureCache[uniform_name].path == uniProperty.value) return;
 
+        let texture : WebGLTexture;
+        
+        if ( ! (uniform_name in this.glTextureCache))
+            texture = gl.createTexture();
+        else
+            texture = this.glTextureCache[uniform_name].texture
 
         let cacheUnifPoint = this.cacheUniformShaderPosition[uniform_name];
         
@@ -123,7 +129,10 @@ class Material {
 
         gl.uniform1i(cacheUnifPoint, uniProperty.texture - 1);
 
-        this.glTextureCache[uniform_name] = texture;
+        this.glTextureCache[uniform_name] = {
+            texture : texture,
+            path : uniProperty.value
+        }
     }
 }
 
