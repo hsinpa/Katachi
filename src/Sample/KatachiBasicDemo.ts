@@ -42,14 +42,14 @@ class KatachiBasicDemo {
             katachi.scene.InsertShapeObj(this.mainQuad);
             katachi.scene.InsertShapeObj(this.mainCube);
 
-            this.SetMaterialTexture(this.mainCube, "./texture/BrickTex_256.jpg");
+            this.SetMaterialTexture(this.mainCube, "./texture/Personal_01.png");
         }
     }
 
     OnMovementEvent(direction : vec2) {
         if (!this.katachiIsReady) return; 
         let deltaTime = 0.02 ;
-        let speed = deltaTime * 0.5;
+        let speed = deltaTime;
         this.katachi.scene.camera.Translate(-direction[0] * speed, 0, direction[1] * speed);
     }
 
@@ -70,6 +70,9 @@ class KatachiBasicDemo {
     }
 
     UpdateLoop(timeSecond : number) {
+
+        this.inputHandler.OnUpdate();
+
         if (this.katachi == null|| this.mainQuad == null) return;
         //this.mainQuad.transform.rotation[0] += timeSecond * 0.02;
 

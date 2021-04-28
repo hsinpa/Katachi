@@ -1,4 +1,4 @@
-export const KeycodeTable = {
+export const KeycodeTable = Object.freeze({
     w : "w",
     s : "s",
     d : "d",
@@ -6,5 +6,5 @@ export const KeycodeTable = {
     arrowUp : "ArrowUp",
     arrowDown : "ArrowDown",
     arrowRight : "ArrowRight",
-    arrowLeft : "ArrowLeft"
-}
+    arrowLeft : "ArrowLeft" 
+});
