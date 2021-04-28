@@ -9,7 +9,7 @@ varying vec2 v_uv;
 varying vec4 v_color;
 varying vec3 v_normal;
 
-uniform vec3 u_worldPosition;
+uniform mat4 u_worldMatrix;
 uniform mat4 u_MVPMatrix;
 
 void main () {

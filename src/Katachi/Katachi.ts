@@ -93,7 +93,8 @@ class Katachi extends WebglCanvas {
         const mvpMatrix = shapeObject.GetMVPMatrix(viewMatrix, projectionMatrix);
 
         shapeObject.ProcessMaterialAttr(this._gl);
-        shapeObject.ProcessMaterialUnifrom(this._gl, this.webglResouceAlloc, this.time, mvpMatrix);
+        shapeObject.ProcessMaterialUnifrom(this._gl, this.webglResouceAlloc, this.time, shapeObject.transform.modelMatrix,
+             mvpMatrix, this.scene.directionLight);
 
         var primitiveType = this._gl.TRIANGLES;
         var offset = 0;

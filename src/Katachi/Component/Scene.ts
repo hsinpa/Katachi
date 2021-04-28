@@ -1,5 +1,6 @@
 import { vec3 } from 'gl-matrix';
 import Camera from './Camera/Camera';
+import DirectionLight from './Light/DirectionLight';
 import ShapeObject from './Shape/ShapeObject';
 
 interface ShapeArrayType {
@@ -11,6 +12,7 @@ class Scene {
     private _shapeArray : ShapeArrayType;
 
     public camera : Camera;
+    public directionLight : DirectionLight;
 
     public get shapeArray() {
         return this._shapeArray;
@@ -20,6 +22,7 @@ class Scene {
         this._shapeArray = {};
 
         this.camera = new Camera();
+        this.directionLight = new DirectionLight();
     }
 
     public InsertShapeObj(shapeObject : ShapeObject) {

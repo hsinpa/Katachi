@@ -27,7 +27,8 @@ export function GetDefaultMaterialConfig(gl : WebGLRenderingContext) {
             }
         },
         uniforms : [DefaultVertexShaderParameter.time, DefaultVertexShaderParameter.mainColor, DefaultVertexShaderParameter.mainTex,
-                     DefaultVertexShaderParameter.worldPosition, DefaultVertexShaderParameter.modelViewProjectionMatrix],
+                     DefaultVertexShaderParameter.worldMatrix, DefaultVertexShaderParameter.modelViewProjectionMatrix, 
+                     DefaultVertexShaderParameter.directionLightColor, DefaultVertexShaderParameter.directionLightDir, DefaultVertexShaderParameter.ambientLightColor],
         count : 0
     }
 

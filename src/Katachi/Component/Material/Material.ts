@@ -61,7 +61,6 @@ class Material {
         if (!(attribute_name in this.cacheAttrShaderPosition)) return;
 
         let cacheAttr = this.cacheAttrShaderPosition[attribute_name];
-
         gl.enableVertexAttribArray(cacheAttr.position_id);   
 
         // Bind the position buffer.

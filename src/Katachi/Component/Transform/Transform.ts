@@ -11,9 +11,13 @@ class Transform {
 
     private _modelMatrix : mat4;
 
-    public get modelMatrix() {
+    public get calculateModelMatrix() {
         //this.quaterion = quat.fromEuler(this.quaterion, this.rotation[0], this.rotation[1], this.rotation[2]);
         return mat4.fromRotationTranslationScale(this._modelMatrix,this.quaterion, this.position, this.scale);
+    }
+
+    public get modelMatrix() {
+        return this._modelMatrix;
     }
 
     public transformVector : TransformVector;

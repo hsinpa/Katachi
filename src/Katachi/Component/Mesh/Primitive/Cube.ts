@@ -3,7 +3,7 @@ import {MeshType} from '../MeshTypes';
 export default function CreateQuadMesh() : MeshType{
     return {
         vertex : GetCubeVertex(),
-        color : [],
+        color : GetColor([1,1,1,1], 36),
         uv : GetCubeUV(6),
 
         //Front, Right, Left, Top, Bottom, Back
@@ -79,6 +79,16 @@ function GetCubeUV(faceCount : number) : number[] {
     }
 
     return uv;
+}
+
+function GetColor(color : number[], vertexCount : number) {
+    let normals : number[]= [];
+
+    for (let i = 0; i < vertexCount; i++) {
+        normals = normals.concat(color);
+    }
+
+    return normals;
 }
 
 function GetCubeNormal(...defineNormal :  number[][]) : number[] {

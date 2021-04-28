@@ -3,7 +3,7 @@ import {MeshType} from '../MeshTypes';
 export default function CreateQuadMesh() : MeshType{
     return {
         vertex : GetQuadVertex(),
-        color : [],
+        color : GetColor([1,1,1,1], 6),
         uv : GetQuadUV(),
         normal : GetQuadNormal(),
         glUsageType : WebGLRenderingContext.STATIC_DRAW
@@ -35,4 +35,13 @@ function GetQuadNormal() : number[] {
         0, 0, 1,
         0, 0, 1,
         0, 0, 1];
+}
+
+function GetColor(color : number[], vertexCount : number) {
+    let normals : number[]= [];
+
+    for (let i = 0; i < vertexCount; i++) {
+        normals = normals.concat(color);
+    }
+    return normals;
 }

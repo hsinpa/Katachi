@@ -6,6 +6,7 @@ import ObjectInterface from '../Object';
 import Camera from '../Camera/Camera';
 import { mat4 } from 'gl-matrix';
 import WebglResource from '../../WebGL/WebglResource';
+import DirectionLight from '../Light/DirectionLight';
 
 class ShapeObject extends ObjectInterface {    
     mesh : Mesh;
@@ -50,7 +51,7 @@ class ShapeObject extends ObjectInterface {
      * @memberof ShapeObject
      */
     GetMVPMatrix(viewMatrixFromCamera : mat4, projectionMatrix : mat4) {
-        let MV = mat4.mul(this.modelViewProjectionMatrix, viewMatrixFromCamera, this.transform.modelMatrix);
+        let MV = mat4.mul(this.modelViewProjectionMatrix, viewMatrixFromCamera, this.transform.calculateModelMatrix);
 
         return mat4.mul(this.modelViewProjectionMatrix, projectionMatrix, MV);
     }
@@ -63,11 +64,19 @@ class ShapeObject extends ObjectInterface {
         this.material.ExecuteAttributeProp(gl, DefaultVertexShaderParameter.normal );    
     }
 
-    ProcessMaterialUnifrom(gl : WebGLRenderingContext, resources : WebglResource, time : number, mvpMatrix : mat4) {
+    ProcessMaterialUnifrom(gl : WebGLRenderingContext, resources : WebglResource, time : number, worldMatrix : mat4, mvpMatrix : mat4, directionLight: DirectionLight) {
         //Default System attr, color and time
         this.material.ExecuteUniformProp(DefaultVertexShaderParameter.time, time, gl.uniform1f.bind(gl));
-        this.material.ExecuteUniformProp(DefaultVertexShaderParameter.worldPosition, this.transform.position, gl.uniform3fv.bind(gl));
+        this.material.ExecuteUniformProp(DefaultVertexShaderParameter.worldMatrix, worldMatrix, gl.uniformMatrix4fv.bind(gl), true);
         this.material.ExecuteUniformProp(DefaultVertexShaderParameter.modelViewProjectionMatrix, mvpMatrix, gl.uniformMatrix4fv.bind(gl), true);
+
+        //Might be null, if user remove it
+        if (directionLight != null) {
+            this.material.ExecuteUniformProp(DefaultVertexShaderParameter.directionLightDir, directionLight.transform.transformVector.GetTransformVector().forward, gl.uniform3fv.bind(gl));
+            this.material.ExecuteUniformProp(DefaultVertexShaderParameter.directionLightColor, directionLight.color, gl.uniform4fv.bind(gl));    
+            this.material.ExecuteUniformProp(DefaultVertexShaderParameter.ambientLightColor, directionLight.ambient_light, gl.uniform4fv.bind(gl));    
+        }
+
 
         //Custom uniform, define by external user
         Object.keys(this.matUniformAttributes).forEach(key => {

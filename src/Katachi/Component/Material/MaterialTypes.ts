@@ -50,8 +50,13 @@ export const DefaultVertexShaderParameter = {
     time : "u_time",
     mainColor : "u_mainColor",
     mainTex : "u_mainTex",
-    worldPosition : "u_worldPosition",
-    modelViewProjectionMatrix : "u_MVPMatrix"
+    worldMatrix : "u_worldMatrix",
+    modelViewProjectionMatrix : "u_MVPMatrix",
+
+    //Uniform Light
+    directionLightDir : "u_directionLightDir",
+    directionLightColor : "u_directionLightColor",
+    ambientLightColor : "u_ambientLightColor"
 }
 
 export interface UniformProperties {
