@@ -17,7 +17,7 @@
 
     float lightAngle = max(0.0, dot(u_directionLightDir, v_normal));
 
-    vec4 color = (u_directionLightColor * lightAngle * tex) + (u_ambientLightColor * tex);
+    vec4 color = (u_directionLightColor * lightAngle * tex) + (u_ambientLightColor * tex) * u_mainColor;
     color.a = 1.0;
 
     gl_FragColor = color; //vec4(v_uv.x, v_uv.y, 0.0, 1.0);

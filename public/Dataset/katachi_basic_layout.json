@@ -1,8 +1,20 @@
 {
     "canvas_dom_query" : "#webgl_canvas",
-    "standard_vertex_shader" : "./glsl/basic/standard_mat.vert",
-    "standard_fragment_shader" : "./glsl/basic/standard_mat.frag",
     "canvas_height" : 600,
     "canvas_width" : 850,
-    "canvas_type" : 0
+    "canvas_type" : 0,
+
+    "shaders" : [
+        {
+            "id" : "glprogram@standard_material",
+            "vertex" : "./glsl/basic/standard_mat.vert",
+            "fragment" : "./glsl/basic/standard_mat.frag"
+        },
+        {
+            "id" : "glprogram@unlit_material",
+            "vertex" : "./glsl/basic/unlit_mat.vert",
+            "fragment" : "./glsl/basic/unlit_mat.frag"
+        }
+    ]
 }
+

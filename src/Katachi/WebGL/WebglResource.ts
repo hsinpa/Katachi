@@ -1,4 +1,4 @@
-import {GLSLDataSet} from './WebglType';
+import {ShaderRawSourceType} from './WebglType';
 import {Dictionary} from 'typescript-collections';
 import {GetImagePromise} from '../Utility/UtilityMethod';
 
@@ -23,7 +23,7 @@ class WebglResource {
                 [responses[0].text(), responses[1].text()]
             )
         ).then((values) => {
-            let gLSLDataSet : GLSLDataSet = {
+            let gLSLDataSet : ShaderRawSourceType = {
                 vertex_shader : values[0],
                 fragment_shader : values[1],
             };

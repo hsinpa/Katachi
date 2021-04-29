@@ -4,19 +4,15 @@ import {GetGLTexture} from './MaterialHelper';
 class Material {
     id : string;
     glProgram : WebGLProgram;
-    fragmentShader : WebGLShader;
-    vertexShader : WebGLShader;
 
     cacheAttrShaderPosition : GLAttrShaderPosition;
     cacheUniformShaderPosition : GLUniformShaderPosition;
 
     glTextureCache : GLUniformTextures;
 
-    constructor(material_id : string, glProgram : WebGLProgram, vertexShader : WebGLShader, fragmentShader : WebGLShader) {
-        this.id = material_id;
+    constructor(glProgram : WebGLProgram) {
+        this.id = "";
         this.glProgram = glProgram;
-        this.fragmentShader = fragmentShader;
-        this.vertexShader = vertexShader;
         this.cacheAttrShaderPosition = {};
         this.cacheUniformShaderPosition = {};
         this.glTextureCache = {};
@@ -61,6 +57,9 @@ class Material {
         if (!(attribute_name in this.cacheAttrShaderPosition)) return;
 
         let cacheAttr = this.cacheAttrShaderPosition[attribute_name];
+
+        if (cacheAttr.position_id < 0) return;
+
         gl.enableVertexAttribArray(cacheAttr.position_id);   
 
         // Bind the position buffer.
@@ -91,46 +90,36 @@ class Material {
     ExecuteUniformProp(attribute_name : string, dataset : any, uniformAction : any, isMatrixOperation = false) {
         if (!(attribute_name in this.cacheUniformShaderPosition)) return;
         let cacheUnifPoint = this.cacheUniformShaderPosition[attribute_name];
-
         if (!isMatrixOperation)
             uniformAction(cacheUnifPoint, dataset);
         else
             uniformAction(cacheUnifPoint, false, dataset)
     }
 
-    async ExecuteUniformTex(gl : WebGLRenderingContext, uniform_name : string, uniProperty : UniformAttrType, callback : Promise<HTMLImageElement>) {
+    ExecuteUniformTex(gl : WebGLRenderingContext, uniform_name : string, sprite :HTMLImageElement) {
         
         if (!(uniform_name in this.cacheUniformShaderPosition)) return;
 
         //If texture path is not update, then ignore
-        if ( (uniform_name in this.glTextureCache) && this.glTextureCache[uniform_name].path == uniProperty.value) return;
+        if (uniform_name in this.glTextureCache && sprite.src == this.glTextureCache[uniform_name].path) return;
 
-        let texture : WebGLTexture;
-        
-        if ( ! (uniform_name in this.glTextureCache))
-            texture = gl.createTexture();
-        else
-            texture = this.glTextureCache[uniform_name].texture
+        let texture : WebGLTexture = gl.createTexture();
 
         let cacheUnifPoint = this.cacheUniformShaderPosition[uniform_name];
         
-        let loadedTexture = await callback;
-
         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
-
-        gl.activeTexture(GetGLTexture(gl, uniProperty.texture));
 
         gl.bindTexture(gl.TEXTURE_2D, texture);
 
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, loadedTexture);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, sprite);
 
-        gl.uniform1i(cacheUnifPoint, uniProperty.texture - 1);
-
+        gl.uniform1i(cacheUnifPoint, 0);
+      
         this.glTextureCache[uniform_name] = {
             texture : texture,
-            path : uniProperty.value
+            path : sprite.src
         }
     }
 }

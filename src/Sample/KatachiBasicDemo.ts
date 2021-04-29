@@ -42,7 +42,10 @@ class KatachiBasicDemo {
             katachi.scene.InsertShapeObj(this.mainQuad);
             katachi.scene.InsertShapeObj(this.mainCube);
 
-            this.SetMaterialTexture(this.mainCube, "./texture/Personal_01.png");
+            this.katachi.materialManager.LoadTextureToObject(this.mainCube, "u_mainTex", "./texture/Personal_01.png", 0);
+
+            this.mainCube.SetCustomUniformAttr("u_mainColor", {value : [0.5, 0 , 0, 1], isMatrix : false, texture : null, function : this.katachi.webglContext.uniform4fv})
+//this.mainQuad.SetCustomUniformAttr("u_mainColor", {value : [0, 0, 0.5, 1], isMatrix : false, texture : null, function : this.katachi.webglContext.uniform4fv})
         }
     }
 
@@ -82,17 +85,6 @@ class KatachiBasicDemo {
         // this.katachi.scene.camera.transform.position[0] =camX;
         // this.katachi.scene.camera.transform.position[2] =camZ;
     }
-
-    SetMaterialTexture(shapeObject : ShapeObject, texturePath : string) {
-
-        shapeObject.SetCustomUniformAttr("u_mainTex", {
-            isMatrix : false,
-            texture : 1,
-            value : texturePath,
-            function : this.katachi.webglContext.uniform1i
-        });
-    }
-
 
 }
 

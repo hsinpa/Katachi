@@ -1,6 +1,5 @@
 import WebglCanvas from './WebGL/WebglCanvas';
 import {KatachiConfigJson} from './WebGL/WebglType';
-import WebglSetupHelper from './WebGL/WebglSetupHelper';
 import WebglResource from './WebGL/WebglResource';
 
 import MaterialManager from './Component/Material/MaterialManager';
@@ -14,7 +13,7 @@ import ShapeObject from './Component/Shape/ShapeObject';
 export type UpdateLoopCallbackType = (timeinSecond : number) => void;
 
 class Katachi extends WebglCanvas {
-    webglSetupHelper : WebglSetupHelper;
+    configJson : KatachiConfigJson;
     webglResouceAlloc : WebglResource;
 
     materialManager : MaterialManager;
@@ -33,11 +32,10 @@ class Katachi extends WebglCanvas {
 
     constructor(configJson : KatachiConfigJson) {
         super(configJson);
-
+        this.configJson = configJson;
         this.webglResouceAlloc = new WebglResource();
-        this.webglSetupHelper = new WebglSetupHelper(this.webglResouceAlloc);
 
-        this.materialManager = new MaterialManager(configJson, this._gl, this.webglSetupHelper, this.webglResouceAlloc);
+        this.materialManager = new MaterialManager(this._gl, this.webglResouceAlloc);
         this.meshManager = new MeshManager();
         this.shapeBuilder = new ShapeBuilder(this._gl, this.materialManager, this.meshManager);
         this.scene = new Scene();
@@ -48,7 +46,7 @@ class Katachi extends WebglCanvas {
         
         this.UpdateLoopCallback = UpdateLoopCallback;
 
-        await this.materialManager.SetDefaultMaterial();
+        await this.materialManager.LoadAndPrepareShaders(this.configJson.shaders);
 
         window.requestAnimationFrame(this.PerformGameLoop.bind(this));
 
@@ -93,7 +91,8 @@ class Katachi extends WebglCanvas {
         const mvpMatrix = shapeObject.GetMVPMatrix(viewMatrix, projectionMatrix);
 
         shapeObject.ProcessMaterialAttr(this._gl);
-        shapeObject.ProcessMaterialUnifrom(this._gl, this.webglResouceAlloc, this.time, shapeObject.transform.modelMatrix,
+
+        shapeObject.ProcessMaterialUniform(this._gl, this.time, shapeObject.transform.modelMatrix,
              mvpMatrix, this.scene.directionLight);
 
         var primitiveType = this._gl.TRIANGLES;

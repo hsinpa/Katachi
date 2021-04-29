@@ -10,6 +10,7 @@ import Transform from '../Transform/Transform';
 import {GLProgramIDs} from '../../Utility/KatachiStringSet';
 import {RandomChar} from '../../Utility/UtilityMethod';
 import {vec3} from 'gl-matrix';
+import { KatachiConfigJson } from '../../WebGL/WebglType';
 
 class ShapeBuilder {
 
@@ -43,14 +44,15 @@ class ShapeBuilder {
 
     BuildQuad() : ShapeObject {
         let mesh = this._meshManager.CreateQuad();
-        let material = this._materialManager.GetMaterial(GLProgramIDs.Standard);
-        
+        let shaderSet = this._materialManager.GetGlShaderSet(GLProgramIDs.Unlit);
+        let material = this._materialManager.CreateMaterial(shaderSet.vertShader, shaderSet.fragShader);
         return this.Build("Quad", mesh, material);
     }
 
     BuildCube() : ShapeObject {
         let mesh = this._meshManager.CreateCube();
-        let material = this._materialManager.GetMaterial(GLProgramIDs.Standard);
+        let shaderSet = this._materialManager.GetGlShaderSet(GLProgramIDs.Standard);
+        let material = this._materialManager.CreateMaterial(shaderSet.vertShader, shaderSet.fragShader);
         
         return this.Build("Cube", mesh, material);
     }
