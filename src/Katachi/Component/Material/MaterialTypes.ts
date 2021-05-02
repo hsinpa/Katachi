@@ -27,6 +27,11 @@ export interface ShaderAttributConfigType {
     [id: string] : CustomShaderProperties
 }
 
+export interface ShaderUniformConfigType {
+    id : string,
+    texture? : boolean
+}
+
 export interface VertexPointerConfig {
     size : number,
     type : number,
@@ -36,6 +41,7 @@ export interface VertexPointerConfig {
 export interface ShaderConfigType {
     attributes : ShaderAttributConfigType,
     uniforms : string[],
+    texture : string[],
     count : number
 }
 
@@ -50,7 +56,8 @@ export const DefaultVertexShaderParameter = {
     time : "u_time",
     mainColor : "u_mainColor",
     mainTex : "u_mainTex",
-    worldMatrix : "u_worldMatrix",
+    modelMatrix : "u_modelMatrix",
+    inverseTransposeModelMatrix : "u_inverseTransposeModelMatrix",
     modelViewProjectionMatrix : "u_MVPMatrix",
 
     //Uniform Light
@@ -66,7 +73,6 @@ export interface UniformProperties {
 export interface UniformAttrType {
     function : GLUniformFunction,
     isMatrix : boolean,
-    texture : number, // Default 0 == No Texture
     value : any
 }
 

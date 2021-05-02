@@ -9,7 +9,8 @@ varying vec2 v_uv;
 varying vec4 v_color;
 varying vec3 v_normal;
 
-uniform mat4 u_worldMatrix;
+uniform mat4 u_modelMatrix;
+uniform mat4 u_inverseTransposeModelMatrix;
 uniform mat4 u_MVPMatrix;
 
 void main () {

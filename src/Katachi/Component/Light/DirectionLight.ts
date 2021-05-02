@@ -13,7 +13,7 @@ export default class DirectionLight extends ObjectInterface {
 
         //Set default light direction in radian
         this.transform.rotation[0] = Math.PI / 4;
-        this.transform.rotation[1] = Math.PI / 12;
+        this.transform.rotation[1] = Math.PI / 3;
         this.transform.rotation[2] = 0;
 
         this.transform.transformVector.UpdateTransformVector(this.transform.rotation);

@@ -4,13 +4,22 @@ import {GetImagePromise} from '../Utility/UtilityMethod';
 
 export enum SourceType {Texture, Shader, GlMaterial};
 
+export interface GLTextureType {
+    uniformLocation : WebGLUniformLocation,
+    texture : WebGLTexture,
+    localIndex : number,
+    globalIndex : number
+}
+
 class WebglResource {
     textureCache : Dictionary<string, HTMLImageElement>;
     glResourceCache : Dictionary<string, any>; // Should only inpuce WebGLShader, WebGlProgram
+    glTextureCache : Dictionary<string, GLTextureType>;
 
     constructor() {
         this.textureCache = new Dictionary();
         this.glResourceCache = new Dictionary();
+        this.glTextureCache = new Dictionary();
     }
 
     async PrepareVFShaders(vertFilePath: string, fragFilePath: string) {
@@ -55,6 +64,20 @@ class WebglResource {
         if (this.glResourceCache.containsKey(key)) {
             return this.glResourceCache.setValue(key, glSource);
         }
+    }
+
+    GetGLTextureSource(key : string) {
+        if (this.glTextureCache.containsKey(key)) {
+            return this.glTextureCache.getValue(key);
+        }
+        return null;
+    }
+
+    SaveGLTextureSource(key : string, webglTexture : WebGLTexture,  uniformLocation : WebGLUniformLocation, texBaseIndex : number ){
+        let currentIndex = this.glTextureCache.size();
+        let globalIndex = texBaseIndex + currentIndex;
+
+        return this.glTextureCache.setValue(key, {uniformLocation : uniformLocation, localIndex : currentIndex, globalIndex : globalIndex, texture : webglTexture});
     }
 }
 

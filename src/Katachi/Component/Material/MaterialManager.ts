@@ -5,6 +5,7 @@ import {KatachiConfigJson, KatachiShaderType} from '../../WebGL/WebglType';
 import {GetDefaultMaterialConfig} from './MaterialHelper'
 import Material from './Material';
 import ShapeObject from '../Shape/ShapeObject';
+import {RandomChar} from '../../Utility/UtilityMethod';
 
 interface ShaderCacheType {
     [id: string] : ShaderDataType
@@ -32,14 +33,13 @@ class MaterialManager {
         return null;
     }
 
-    public async LoadTextureToObject(shapeObject : ShapeObject, uniformID : string, texture_path : string, textureIndex : number) {
+    public async LoadTextureToObject(shapeObject : ShapeObject, uniformID : string, texture_path : string) {
         let tex = await this._webglResource.GetImage(texture_path);
 
         shapeObject.SetCustomUniformAttr(uniformID, {
             isMatrix : false,
-            texture : textureIndex,
             value : tex,
-            function : this._gl.uniform1i.bind(this._gl)
+            function : this._gl.uniform1i
         });
     }
     
@@ -73,7 +73,7 @@ class MaterialManager {
         let shaderDataType = await this.LoadAndPrepareShader(shader_id, vertex_path, frag_path);
         let glProgram = this.CreateGLProgram(shaderDataType.vertShader, shaderDataType.fragShader);
 
-        let material = new Material(glProgram);
+        let material = new Material(RandomChar(6), glProgram, this._webglResource);
 
         return material;
     }
@@ -81,7 +81,7 @@ class MaterialManager {
     CreateMaterial(vertShader : WebGLShader, fragShader : WebGLShader) {
         let glProgram = this.CreateGLProgram(vertShader, fragShader);
 
-        let material = new Material(glProgram);
+        let material = new Material(RandomChar(6), glProgram, this._webglResource);
 
         return material;
     }

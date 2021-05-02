@@ -60,10 +60,11 @@ class ShapeObject extends ObjectInterface {
         this.material.ExecuteAttributeProp(gl, DefaultVertexShaderParameter.normal );    
     }
 
-    ProcessMaterialUniform(gl : WebGLRenderingContext, time : number, worldMatrix : mat4, mvpMatrix : mat4, directionLight: DirectionLight) {
+    ProcessMaterialUniform(gl : WebGLRenderingContext, time : number, worldMatrix : mat4, modelInverseTMatrix  : mat4, mvpMatrix : mat4, directionLight: DirectionLight) {
         //Default System attr, color and time
         this.material.ExecuteUniformProp(DefaultVertexShaderParameter.time, time, gl.uniform1f.bind(gl));
-        this.material.ExecuteUniformProp(DefaultVertexShaderParameter.worldMatrix, worldMatrix, gl.uniformMatrix4fv.bind(gl), true);
+        this.material.ExecuteUniformProp(DefaultVertexShaderParameter.modelMatrix, worldMatrix, gl.uniformMatrix4fv.bind(gl), true);
+        this.material.ExecuteUniformProp(DefaultVertexShaderParameter.inverseTransposeModelMatrix, modelInverseTMatrix, gl.uniformMatrix4fv.bind(gl), true);
         this.material.ExecuteUniformProp(DefaultVertexShaderParameter.modelViewProjectionMatrix, mvpMatrix, gl.uniformMatrix4fv.bind(gl), true);
 
         //Might be null, if user remove it
@@ -81,6 +82,9 @@ class ShapeObject extends ObjectInterface {
                 this.material.ExecuteUniformProp(key, this.matUniformAttributes[key].value, this.matUniformAttributes[key].function.bind(gl), this.matUniformAttributes[key].isMatrix);
             }
         });
+
+        //Empty all custom uniform config
+        this.matUniformAttributes = {};
     }
 
 //#endregion

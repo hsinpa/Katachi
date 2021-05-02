@@ -1,5 +1,6 @@
-import {GLUniformFunction, ShaderAttributConfigType, GLAttrShaderPosition, GLUniformShaderPosition, ShaderConfigType, GLUniformTextures, UniformProperties, UniformAttrType} from './MaterialTypes';
+import {GLUniformFunction, ShaderAttributConfigType, GLAttrShaderPosition, GLUniformShaderPosition, ShaderConfigType, GLUniformTextures, ShaderUniformConfigType} from './MaterialTypes';
 import {GetGLTexture} from './MaterialHelper';
+import WebglResource from '../../WebGL/WebglResource';
 
 class Material {
     id : string;
@@ -8,19 +9,20 @@ class Material {
     cacheAttrShaderPosition : GLAttrShaderPosition;
     cacheUniformShaderPosition : GLUniformShaderPosition;
 
-    glTextureCache : GLUniformTextures;
+    glResource: WebglResource;
 
-    constructor(glProgram : WebGLProgram) {
-        this.id = "";
+    constructor(id : string, glProgram : WebGLProgram, glResource: WebglResource) {
+        this.id = id;
         this.glProgram = glProgram;
+        this.glResource = glResource;
         this.cacheAttrShaderPosition = {};
         this.cacheUniformShaderPosition = {};
-        this.glTextureCache = {};
     }
 
     PreloadProperties(gl : WebGLRenderingContext, config : ShaderConfigType) {
         this.PreloadAttributeProperties(gl, config.attributes);
         this.PreloadUniformProperties(gl, config.uniforms);
+        this.PreloadUniformTexture(gl, config.texture);
     }
     
     //Attribute
@@ -49,6 +51,27 @@ class Material {
             //Might be null, if frag shader didn't use this property at all
             if (uniform != null) {
                 this.cacheUniformShaderPosition[properties[i]] = uniform;
+            }
+        }
+    }
+
+    private PreloadUniformTexture(gl : WebGLRenderingContext, properties : string[]) {
+        let pCount = properties.length;
+
+        for (let i = 0; i < pCount; i++) {
+            let uniform = (gl.getUniformLocation(this.glProgram, properties[i]));
+
+            //Might be null, if frag shader didn't use this property at all
+            if (uniform != null) {
+                this.cacheUniformShaderPosition[properties[i]] = uniform;
+
+                let texture = gl.createTexture();
+                gl.bindTexture(gl.TEXTURE_2D, texture);
+
+                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE,
+                              new Uint8Array([255, 255, 255, 255]));
+
+                this.glResource.SaveGLTextureSource(this.id+properties[i], texture, uniform, gl.TEXTURE0);
             }
         }
     }
@@ -89,6 +112,7 @@ class Material {
      */
     ExecuteUniformProp(attribute_name : string, dataset : any, uniformAction : any, isMatrixOperation = false) {
         if (!(attribute_name in this.cacheUniformShaderPosition)) return;
+
         let cacheUnifPoint = this.cacheUniformShaderPosition[attribute_name];
         if (!isMatrixOperation)
             uniformAction(cacheUnifPoint, dataset);
@@ -98,29 +122,26 @@ class Material {
 
     ExecuteUniformTex(gl : WebGLRenderingContext, uniform_name : string, sprite :HTMLImageElement) {
         
-        if (!(uniform_name in this.cacheUniformShaderPosition)) return;
-
         //If texture path is not update, then ignore
-        if (uniform_name in this.glTextureCache && sprite.src == this.glTextureCache[uniform_name].path) return;
+        if (this.glResource.GetGLTextureSource(this.id+uniform_name) == null) return;
 
-        let texture : WebGLTexture = gl.createTexture();
-
-        let cacheUnifPoint = this.cacheUniformShaderPosition[uniform_name];
+        let glTextureDataSet = this.glResource.GetGLTextureSource(this.id+uniform_name);
         
         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
 
-        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.activeTexture(glTextureDataSet.globalIndex);      
+        gl.bindTexture(gl.TEXTURE_2D, glTextureDataSet.texture);
 
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    
+        gl.texImage2D(gl.TEXTURE_2D, 0,  gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, sprite);
 
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, sprite);
+        gl.uniform1i(glTextureDataSet.uniformLocation, glTextureDataSet.localIndex);
 
-        gl.uniform1i(cacheUnifPoint, 0);
-      
-        this.glTextureCache[uniform_name] = {
-            texture : texture,
-            path : sprite.src
-        }
+        console.log(glTextureDataSet.localIndex);
     }
 }
 

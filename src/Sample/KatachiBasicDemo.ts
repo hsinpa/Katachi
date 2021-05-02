@@ -10,6 +10,7 @@ class KatachiBasicDemo {
     private katachi : Katachi;
     private mainQuad : ShapeObject;
     private mainCube : ShapeObject;
+    private mainFloor : ShapeObject;
 
     private inputHandler : InputHandler
     private katachiIsReady: boolean;
@@ -31,21 +32,30 @@ class KatachiBasicDemo {
             this.katachi.scene.camera.projectionType = ProjectionType.Perspective;
             this.mainQuad = katachi.shapeBuilder.BuildQuad();
             this.mainCube = katachi.shapeBuilder.BuildCube();
+            this.mainFloor = katachi.shapeBuilder.BuildQuad();
 
-            this.mainQuad.Scale(0.2);
+            this.mainQuad.transform.Scale(0.2);
             this.mainQuad.transform.position[2] = -1;
             this.mainQuad.transform.position[0] = -1.2;
 
-            this.mainCube.Scale(0.5);
+            this.mainCube.transform.Scale(0.5);
             this.mainCube.transform.position[2] = -2;
 
-            katachi.scene.InsertShapeObj(this.mainQuad);
+            this.mainFloor.transform.rotation[0] = Math.PI/2;
+            this.mainFloor.transform.position[1] = -0.5;
+            this.mainFloor.transform.Scale(20);
+
             katachi.scene.InsertShapeObj(this.mainCube);
+            katachi.scene.InsertShapeObj(this.mainQuad);
+            katachi.scene.InsertShapeObj(this.mainFloor);
 
-            this.katachi.materialManager.LoadTextureToObject(this.mainCube, "u_mainTex", "./texture/Personal_01.png", 0);
+            this.katachi.materialManager.LoadTextureToObject(this.mainQuad, "u_mainTex", "./texture/BrickTex_256.jpg");
+            this.katachi.materialManager.LoadTextureToObject(this.mainCube, "u_mainTex", "./texture/Personal_01.png");
+            
 
-            this.mainCube.SetCustomUniformAttr("u_mainColor", {value : [0.5, 0 , 0, 1], isMatrix : false, texture : null, function : this.katachi.webglContext.uniform4fv})
-//this.mainQuad.SetCustomUniformAttr("u_mainColor", {value : [0, 0, 0.5, 1], isMatrix : false, texture : null, function : this.katachi.webglContext.uniform4fv})
+            this.mainCube.SetCustomUniformAttr("u_mainColor", {value : [1, 1, 1, 1], isMatrix : false, function : this.katachi.webglContext.uniform4fv})
+            this.mainQuad.SetCustomUniformAttr("u_mainColor", {value : [0, 0, 1, 1], isMatrix : false, function : this.katachi.webglContext.uniform4fv})
+            this.mainFloor.SetCustomUniformAttr("u_mainColor", {value : [0.2, 0.2, 0.2, 1], isMatrix : false, function : this.katachi.webglContext.uniform4fv})
         }
     }
 
@@ -53,7 +63,7 @@ class KatachiBasicDemo {
         if (!this.katachiIsReady) return; 
         let deltaTime = 0.02 ;
         let speed = deltaTime;
-        this.katachi.scene.camera.Translate(-direction[0] * speed, 0, direction[1] * speed);
+        this.katachi.scene.camera.transform.Translate(-direction[0] * speed, 0, direction[1] * speed);
     }
 
     OnMouseEvent(moveDelta : number[]) {

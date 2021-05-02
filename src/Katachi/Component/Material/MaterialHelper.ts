@@ -26,9 +26,12 @@ export function GetDefaultMaterialConfig(gl : WebGLRenderingContext) {
                 vertexPointer : {size : 3, type : gl.FLOAT, normalize: true},
             }
         },
-        uniforms : [DefaultVertexShaderParameter.time, DefaultVertexShaderParameter.mainColor, DefaultVertexShaderParameter.mainTex,
-                     DefaultVertexShaderParameter.worldMatrix, DefaultVertexShaderParameter.modelViewProjectionMatrix, 
-                     DefaultVertexShaderParameter.directionLightColor, DefaultVertexShaderParameter.directionLightDir, DefaultVertexShaderParameter.ambientLightColor],
+        uniforms : [DefaultVertexShaderParameter.time, DefaultVertexShaderParameter.mainColor, DefaultVertexShaderParameter.mainTex,  
+                    DefaultVertexShaderParameter.modelMatrix, DefaultVertexShaderParameter.modelViewProjectionMatrix, DefaultVertexShaderParameter.inverseTransposeModelMatrix,
+                    DefaultVertexShaderParameter.directionLightColor, DefaultVertexShaderParameter.directionLightDir, DefaultVertexShaderParameter.ambientLightColor],
+
+        texture : [DefaultVertexShaderParameter.mainTex],
+            
         count : 0
     }
 
