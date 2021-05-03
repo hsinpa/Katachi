@@ -23,11 +23,6 @@ class Katachi extends WebglCanvas {
 
     private previousTimeStamp : number = 0;
     
-    //Depth Section
-    private depthFrameBuffer : WebGLFramebuffer;
-    private depthRenderBuffer : WebGLRenderbuffer;
-    private depthTexture : WebGLTexture;
-
     private readonly targetTextureWidth = 256;
     private readonly targetTextureHeight = 256;
 
@@ -54,31 +49,14 @@ class Katachi extends WebglCanvas {
         if (!this.isKatachiValid) return false;
         
         this.UpdateLoopCallback = UpdateLoopCallback;
+        
+        this.PrepareDepthFrameBuffer();
 
         await this.materialManager.LoadAndPrepareShaders(this.configJson.shaders);
-
-        this.PrepareDepthFrameBuffer();
 
         window.requestAnimationFrame(this.PerformGameLoop.bind(this));
 
         return true;
-    }
-
-    private PrepareDepthFrameBuffer() {
-        this.depthTexture = this.webglResouceAlloc.CreateGLTexture(this._gl, this.targetTextureWidth, this.targetTextureHeight, null);
-
-        this.depthFrameBuffer = this._gl.createFramebuffer();
-        this._gl.bindFramebuffer(this._gl.FRAMEBUFFER, this.depthFrameBuffer);
-
-        const attachmentPoint = this._gl.COLOR_ATTACHMENT0;
-        this._gl.framebufferTexture2D(this._gl.FRAMEBUFFER, attachmentPoint, this._gl.TEXTURE_2D, this.depthTexture, 0);
-
-        this.depthRenderBuffer = this._gl.createRenderbuffer();
-        this._gl.bindRenderbuffer(this._gl.RENDERBUFFER, this.depthRenderBuffer);
-        
-        // make a depth buffer and the same size as the targetTexture
-        this._gl.renderbufferStorage(this._gl.RENDERBUFFER, this._gl.DEPTH_COMPONENT16, this.targetTextureWidth, this.targetTextureHeight);
-        this._gl.framebufferRenderbuffer(this._gl.FRAMEBUFFER, this._gl.DEPTH_ATTACHMENT, this._gl.RENDERBUFFER, this.depthRenderBuffer);
     }
     
     private PerformGameLoop(timeStamp : number) {
@@ -91,9 +69,9 @@ class Katachi extends WebglCanvas {
 
         //Depth Map Rendering
         this.DrawCanvas(this.depthFrameBuffer, this.targetTextureWidth, this.targetTextureHeight);
-
+        
         //Actual rendering
-        //this.DrawCanvas(null, this._gl.canvas.width, this._gl.canvas.height);
+        this.DrawCanvas(null, this._gl.canvas.width, this._gl.canvas.height);
 
         window.requestAnimationFrame(this.PerformGameLoop.bind(this));
     }
@@ -102,12 +80,9 @@ class Katachi extends WebglCanvas {
         let gl = this._gl;
 
         gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer);
-        
-        //this._gl.bindTexture(this._gl.TEXTURE_2D, this.depthTexture);
-
         gl.viewport(0, 0, canvasWidth, canvasHeight);        
         gl.clearColor(0, 0, 0, 0);
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);     
 
         this.scene.camera.SetCanvasWidthHeight(canvasWidth, canvasHeight);
         let cameraViewMatrix = this.scene.camera.viewMatrix;

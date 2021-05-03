@@ -75,12 +75,10 @@ class ShapeObject extends ObjectInterface {
             this.material.ExecuteUniformProp(DefaultVertexShaderParameter.ambientLightColor, directionLight.ambient_light, gl.uniform4fv.bind(gl));    
         }
 
-
-
         //Custom uniform, define by external user
         Object.keys(this.matUniformAttributes).forEach(key => {
             if (this.matUniformAttributes[key].value instanceof HTMLImageElement) {
-                //this.material.ExecuteUniformSprite(gl, key, this.matUniformAttributes[key].value);    
+                this.material.ExecuteUniformSprite(gl, key, this.matUniformAttributes[key].value);    
             } else {
                 this.material.ExecuteUniformProp(key, this.matUniformAttributes[key].value, this.matUniformAttributes[key].function.bind(gl), this.matUniformAttributes[key].isMatrix);
             }

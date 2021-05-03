@@ -124,7 +124,6 @@ class Material {
         
         //If texture path is not update, then ignore
         if (this.glResource.GetGLTextureSource(this.id+uniform_name) == null) return;
-
         let glTextureDataSet = this.glResource.GetGLTextureSource(this.id+uniform_name);
         
         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
@@ -140,18 +139,6 @@ class Material {
         gl.texImage2D(gl.TEXTURE_2D, 0,  gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, sprite);
 
         gl.uniform1i(glTextureDataSet.uniformLocation, glTextureDataSet.localIndex);
-    }
-
-    ExecuteUniformTex(gl : WebGLRenderingContext, uniform_name : string, texture : WebGLTexture) {
-        //If texture path is not update, then ignore
-        if (this.glResource.GetGLTextureSource(this.id+uniform_name) == null) return;
-
-        let glTextureDataSet = this.glResource.GetGLTextureSource(this.id+uniform_name);
-
-        //gl.activeTexture(glTextureDataSet.globalIndex);      
-        //gl.bindTexture(gl.TEXTURE_2D, texture);
-
-        //gl.uniform1i(glTextureDataSet.uniformLocation, glTextureDataSet.localIndex);
     }
 }
 
