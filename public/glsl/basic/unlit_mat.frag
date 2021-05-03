@@ -10,8 +10,8 @@
 
   void main () {
     vec4 tex = texture2D(u_mainTex, v_uv);
-    vec4 color = tex * u_mainColor;
-    color.a = 1.0;
+    // vec4 color = tex * u_mainColor;
+    // color.a = 1.0;
 
-    gl_FragColor = color; //vec4(v_uv.x, v_uv.y, 0.0, 1.0);
+    gl_FragColor = tex; //vec4(v_uv.x, v_uv.y, 0.0, 1.0);
   }

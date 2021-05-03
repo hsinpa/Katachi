@@ -60,7 +60,8 @@ class ShapeObject extends ObjectInterface {
         this.material.ExecuteAttributeProp(gl, DefaultVertexShaderParameter.normal );    
     }
 
-    ProcessMaterialUniform(gl : WebGLRenderingContext, time : number, worldMatrix : mat4, modelInverseTMatrix  : mat4, mvpMatrix : mat4, directionLight: DirectionLight) {
+    ProcessMaterialUniform(gl : WebGLRenderingContext, time : number, worldMatrix : mat4, modelInverseTMatrix  : mat4, mvpMatrix : mat4, directionLight: DirectionLight,
+        depthTexture : WebGLTexture) {
         //Default System attr, color and time
         this.material.ExecuteUniformProp(DefaultVertexShaderParameter.time, time, gl.uniform1f.bind(gl));
         this.material.ExecuteUniformProp(DefaultVertexShaderParameter.modelMatrix, worldMatrix, gl.uniformMatrix4fv.bind(gl), true);
@@ -74,10 +75,12 @@ class ShapeObject extends ObjectInterface {
             this.material.ExecuteUniformProp(DefaultVertexShaderParameter.ambientLightColor, directionLight.ambient_light, gl.uniform4fv.bind(gl));    
         }
 
+
+
         //Custom uniform, define by external user
         Object.keys(this.matUniformAttributes).forEach(key => {
             if (this.matUniformAttributes[key].value instanceof HTMLImageElement) {
-                this.material.ExecuteUniformTex(gl, key, this.matUniformAttributes[key].value);
+                //this.material.ExecuteUniformSprite(gl, key, this.matUniformAttributes[key].value);    
             } else {
                 this.material.ExecuteUniformProp(key, this.matUniformAttributes[key].value, this.matUniformAttributes[key].function.bind(gl), this.matUniformAttributes[key].isMatrix);
             }

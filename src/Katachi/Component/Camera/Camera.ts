@@ -19,7 +19,7 @@ class Camera extends ObjectInterface{
     public farClipPoint : number = 10;
     public nearClipPoint : number = 0.3;
 
-    private aspectRatio : number;
+    private aspectRatio : number = 1;
     private _foxy : number = 60;
     private lookUpPoint : vec3;
 
