@@ -1,4 +1,4 @@
-import {GLUniformFunction, ShaderAttributConfigType, GLAttrShaderPosition, GLUniformShaderPosition, ShaderConfigType, GLUniformTextures, ShaderUniformConfigType} from './MaterialTypes';
+import {GLUniformFunction, ShaderAttributConfigType, GLAttrShaderPosition, GLUniformShaderPosition, ShaderConfigType, UniformTextureDefine} from './MaterialTypes';
 import {GetGLTexture} from './MaterialHelper';
 import WebglResource from '../../WebGL/WebglResource';
 
@@ -55,23 +55,30 @@ class Material {
         }
     }
 
-    private PreloadUniformTexture(gl : WebGLRenderingContext, properties : string[]) {
+    private PreloadUniformTexture(gl : WebGLRenderingContext, properties : UniformTextureDefine[]) {
         let pCount = properties.length;
 
         for (let i = 0; i < pCount; i++) {
-            let uniform = (gl.getUniformLocation(this.glProgram, properties[i]));
+            let uniform = (gl.getUniformLocation(this.glProgram, properties[i].id));
 
             //Might be null, if frag shader didn't use this property at all
             if (uniform != null) {
-                this.cacheUniformShaderPosition[properties[i]] = uniform;
+                this.cacheUniformShaderPosition[properties[i].id] = uniform;
+                
+                let key = this.id+properties[i].id;
+                let textureKey = (properties[i].texture === undefined) ? key : properties[i].texture;
 
-                let texture = gl.createTexture();
-                gl.bindTexture(gl.TEXTURE_2D, texture);
+                this.glResource.SaveGLTextureSource(key, textureKey, uniform);
 
-                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE,
-                              new Uint8Array([255, 255, 255, 255]));
-
-                this.glResource.SaveGLTextureSource(this.id+properties[i], texture, uniform, gl.TEXTURE0);
+                if (!this.glResource.glGlobalTextureCache.containsKey(textureKey)) {
+                    let texture = gl.createTexture();
+                    gl.bindTexture(gl.TEXTURE_2D, texture);
+        
+                    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE,
+                                  new Uint8Array([255, 255, 255, 255])); 
+    
+                    this.glResource.SaveGlobalTextureSource(textureKey, texture, gl.TEXTURE0);
+                }
             }
         }
     }
@@ -121,15 +128,17 @@ class Material {
     }
 
     ExecuteUniformSprite(gl : WebGLRenderingContext, uniform_name : string, sprite :HTMLImageElement) {
-        
         //If texture path is not update, then ignore
-        if (this.glResource.GetGLTextureSource(this.id+uniform_name) == null) return;
         let glTextureDataSet = this.glResource.GetGLTextureSource(this.id+uniform_name);
-        
+
+        if (glTextureDataSet == null) return;
+
         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
 
-        gl.activeTexture(glTextureDataSet.globalIndex);      
-        gl.bindTexture(gl.TEXTURE_2D, glTextureDataSet.texture);
+        console.log(uniform_name+", "+ sprite.src +", "+glTextureDataSet.globalType.globalIndex +", " + glTextureDataSet.localType.localIndex );
+
+        gl.activeTexture(glTextureDataSet.globalType.globalIndex);      
+        gl.bindTexture(gl.TEXTURE_2D, glTextureDataSet.globalType.texture);
 
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
@@ -138,15 +147,18 @@ class Material {
     
         gl.texImage2D(gl.TEXTURE_2D, 0,  gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, sprite);
 
-        gl.uniform1i(glTextureDataSet.uniformLocation, glTextureDataSet.localIndex);
+        gl.uniform1i(glTextureDataSet.localType.uniformLocation, glTextureDataSet.localType.localIndex);
     }
 
-    ExecuteUniformTex(gl : WebGLRenderingContext, uniform_name : string, texture :WebGLTexture) {
-        if (!(uniform_name in this.cacheUniformShaderPosition)) return;
+    ExecuteUniformTex(gl : WebGLRenderingContext, uniform_name : string) {
+        let glTextureDataSet = this.glResource.GetGLTextureSource(this.id+uniform_name);
 
-        let cacheUnifPoint = this.cacheUniformShaderPosition[uniform_name];
+        if (glTextureDataSet == null) return;
 
-        
+        gl.activeTexture(glTextureDataSet.globalType.globalIndex);      
+        gl.bindTexture(gl.TEXTURE_2D, glTextureDataSet.globalType.texture);
+
+        gl.uniform1i(glTextureDataSet.localType.uniformLocation, glTextureDataSet.localType.localIndex);
     }
 }
 

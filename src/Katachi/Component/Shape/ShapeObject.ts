@@ -78,7 +78,8 @@ class ShapeObject extends ObjectInterface {
 
         if (depthTexture != null) {
 
-            
+            this.material.ExecuteUniformTex(gl, DefaultVertexShaderParameter.depthMapTexture);    
+
         }
 
         //Custom uniform, define by external user

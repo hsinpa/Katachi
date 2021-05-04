@@ -41,7 +41,7 @@ export interface VertexPointerConfig {
 export interface ShaderConfigType {
     attributes : ShaderAttributConfigType,
     uniforms : string[],
-    texture : string[],
+    texture : UniformTextureDefine[],
     count : number
 }
 
@@ -64,7 +64,12 @@ export const DefaultVertexShaderParameter = {
     directionLightDir : "u_directionLightDir",
     directionLightColor : "u_directionLightColor",
     ambientLightColor : "u_ambientLightColor",
-    depthMapTexture : 'u_depthMapTex'
+    depthMapTexture : 'u_depthTex'
+}
+
+export interface UniformTextureDefine {
+    id : string,
+    texture? : string
 }
 
 export interface UniformProperties {

@@ -22,12 +22,14 @@ class Katachi extends WebglCanvas {
     meshManager : MeshManager;
     shapeBuilder : ShapeBuilder;
     webglDepthBuffer : WebGLDepthBuffer;
+    
     scene : Scene;
 
     private previousTimeStamp : number = 0;
     
     private readonly targetTextureWidth = 256;
     private readonly targetTextureHeight = 256;
+    private currentFrameBuffer : WebGLFramebuffer;
 
     public time : number;
 
@@ -73,7 +75,7 @@ class Katachi extends WebglCanvas {
 
         //Depth Map Rendering
         this.DrawCanvas(this.webglDepthBuffer.depthFrameBuffer, this.scene.lights.directionLigth.projection, this.targetTextureWidth, this.targetTextureHeight);
-        
+
         //Actual rendering
         this.DrawCanvas(null, this.scene.camera.projection, this._gl.canvas.width, this._gl.canvas.height);
 
@@ -82,7 +84,7 @@ class Katachi extends WebglCanvas {
 
     public DrawCanvas(frameBuffer : WebGLFramebuffer, projection : Projection, canvasWidth : number, canvasHeight : number) {
         let gl = this._gl;
-
+        this.currentFrameBuffer = frameBuffer;
         gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer);
         gl.viewport(0, 0, canvasWidth, canvasHeight);        
         gl.clearColor(0, 0, 0, 0);
@@ -106,7 +108,7 @@ class Katachi extends WebglCanvas {
         shapeObject.ProcessMaterialAttr(this._gl);
 
         shapeObject.ProcessMaterialUniform(this._gl, this.time, shapeObject.transform.modelMatrix, shapeObject.transform.InverseTransposeMatrix,
-             mvpMatrix, this.scene.lights, this.webglDepthBuffer.depthMapTex);
+             mvpMatrix, this.scene.lights, (this.currentFrameBuffer == null) ? null : this.webglDepthBuffer.depthMapTex);
 
         var primitiveType = this._gl.TRIANGLES;
         var offset = 0;

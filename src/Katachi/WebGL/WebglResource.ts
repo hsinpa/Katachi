@@ -1,6 +1,7 @@
 import {ShaderRawSourceType} from './WebglType';
 import {Dictionary} from 'typescript-collections';
 import {GetImagePromise} from '../Utility/UtilityMethod';
+import {DefaultVertexShaderParameter} from '../Component/Material/MaterialTypes';
 
 export enum SourceType {Texture, Shader, GlMaterial};
 
@@ -104,11 +105,14 @@ class WebglResource {
         return {globalType : globalTexCache, localType : localTexCache} as GLTextureType;
     }
 
-    SaveGLTextureSource(key : string, webglTexture : WebGLTexture,  uniformLocation : WebGLUniformLocation, texBaseIndex : number ){
-        let currentIndex = this.glTextureCache.size();
-        let globalIndex = texBaseIndex + currentIndex;
+    SaveGlobalTextureSource(key : string, webglTexture : WebGLTexture, texBaseIndex : number) {
+        let currentIndex = texBaseIndex + this.glGlobalTextureCache.size();
+        this.glGlobalTextureCache.setValue(key, {texture : webglTexture, globalIndex : currentIndex});
+    }
 
-        return this.glTextureCache.setValue(key, {uniformLocation : uniformLocation, localIndex : currentIndex, globalIndex : globalIndex, texture : webglTexture});
+    SaveGLTextureSource(key : string, globalTextureKey : string,  uniformLocation : WebGLUniformLocation ){
+        let currentIndex = this.glGlobalTextureCache.size();
+        return this.glLocalTextureCache.setValue(key, {uniformLocation : uniformLocation, localIndex : currentIndex, texture_key : globalTextureKey});
     }
 }
 

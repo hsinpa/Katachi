@@ -1,4 +1,5 @@
 import WebglResource from "./WebglResource";
+import {DefaultVertexShaderParameter} from "../Component/Material/MaterialTypes";
 
 class WebGLDepthBuffer {
 
@@ -29,7 +30,8 @@ class WebGLDepthBuffer {
         // // make a depth buffer and the same size as the targetTexture
         // gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, width, height);
         // gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, depthRenderBuffer);
-
+        webglResouceAlloc.SaveGlobalTextureSource(DefaultVertexShaderParameter.depthMapTexture, this._depthMapTex, gl.TEXTURE0);
+        
         gl.bindTexture(gl.TEXTURE_2D, null);
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     }
