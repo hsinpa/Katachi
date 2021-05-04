@@ -2,7 +2,9 @@ import Katachi from '../Katachi/Katachi';
 import Mesh from '../Katachi/Component/Mesh/Mesh';
 import ShapeObject from '../Katachi/Component/Shape/ShapeObject';
 import {vec2, vec3} from 'gl-matrix';
-import Camera, { ProjectionType } from '../Katachi/Component/Camera/Camera';
+import Camera from '../Katachi/Component/Camera/Camera';
+import  { ProjectionType } from '../Katachi/Component/Projection';
+
 import InputHandler, { InputMovementType } from './Input/InputHandler';
 import {DeltaTime} from './StaticValues'
 
@@ -29,7 +31,7 @@ class KatachiBasicDemo {
         if (this.katachiIsReady) {
             this.inputHandler.RegisterMouseMovement(canvasDom, this.OnMouseEvent.bind(this));
 
-            this.katachi.scene.camera.projectionType = ProjectionType.Perspective;
+            //this.katachi.scene.camera.projection.projectionType = ProjectionType.Perspective;
             this.mainQuad = katachi.shapeBuilder.BuildQuad();
             this.mainCube = katachi.shapeBuilder.BuildCube();
             this.mainFloor = katachi.shapeBuilder.BuildQuad();

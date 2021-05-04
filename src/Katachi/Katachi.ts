@@ -9,6 +9,8 @@ import ShapeBuilder from './Component/Shape/ShapeBuilder';
 import Scene from './Component/Scene';
 import { mat4 } from 'gl-matrix';
 import ShapeObject from './Component/Shape/ShapeObject';
+import WebGLDepthBuffer from './WebGL/WebGLDepthBuffer';
+import { Projection } from './Component/Projection';
 
 export type UpdateLoopCallbackType = (timeinSecond : number) => void;
 
@@ -19,6 +21,7 @@ class Katachi extends WebglCanvas {
     materialManager : MaterialManager;
     meshManager : MeshManager;
     shapeBuilder : ShapeBuilder;
+    webglDepthBuffer : WebGLDepthBuffer;
     scene : Scene;
 
     private previousTimeStamp : number = 0;
@@ -38,6 +41,7 @@ class Katachi extends WebglCanvas {
         super(configJson);
         this.configJson = configJson;
         this.webglResouceAlloc = new WebglResource();
+        this.webglDepthBuffer = new WebGLDepthBuffer();
 
         this.materialManager = new MaterialManager(this._gl, this.webglResouceAlloc);
         this.meshManager = new MeshManager();
@@ -49,8 +53,8 @@ class Katachi extends WebglCanvas {
         if (!this.isKatachiValid) return false;
         
         this.UpdateLoopCallback = UpdateLoopCallback;
-        
-        this.PrepareDepthFrameBuffer();
+
+        this.webglDepthBuffer.PrepareDepthFrameBuffer(this._gl, this.webglResouceAlloc, this.targetTextureWidth, this.targetTextureHeight);
 
         await this.materialManager.LoadAndPrepareShaders(this.configJson.shaders);
 
@@ -68,15 +72,15 @@ class Katachi extends WebglCanvas {
             this.UpdateLoopCallback(this.time);
 
         //Depth Map Rendering
-        this.DrawCanvas(this.depthFrameBuffer, this.targetTextureWidth, this.targetTextureHeight);
+        this.DrawCanvas(this.webglDepthBuffer.depthFrameBuffer, this.scene.lights.directionLigth.projection, this.targetTextureWidth, this.targetTextureHeight);
         
         //Actual rendering
-        this.DrawCanvas(null, this._gl.canvas.width, this._gl.canvas.height);
+        this.DrawCanvas(null, this.scene.camera.projection, this._gl.canvas.width, this._gl.canvas.height);
 
         window.requestAnimationFrame(this.PerformGameLoop.bind(this));
     }
 
-    public DrawCanvas(frameBuffer : WebGLFramebuffer, canvasWidth : number, canvasHeight : number) {
+    public DrawCanvas(frameBuffer : WebGLFramebuffer, projection : Projection, canvasWidth : number, canvasHeight : number) {
         let gl = this._gl;
 
         gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer);
@@ -84,9 +88,9 @@ class Katachi extends WebglCanvas {
         gl.clearColor(0, 0, 0, 0);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);     
 
-        this.scene.camera.SetCanvasWidthHeight(canvasWidth, canvasHeight);
-        let cameraViewMatrix = this.scene.camera.viewMatrix;
-        let cameraProjectionMatrix = this.scene.camera.projectionMatrix;
+        projection.aspectRatio = canvasWidth / canvasHeight;
+        let cameraViewMatrix = projection.viewMatrix;
+        let cameraProjectionMatrix = projection.projectionMatrix;
 
         for (var shapeID in this.scene.shapeArray) {
             let shapeObject = this.scene.shapeArray[shapeID];
@@ -100,8 +104,9 @@ class Katachi extends WebglCanvas {
         const mvpMatrix = shapeObject.GetMVPMatrix(viewMatrix, projectionMatrix);
 
         shapeObject.ProcessMaterialAttr(this._gl);
+
         shapeObject.ProcessMaterialUniform(this._gl, this.time, shapeObject.transform.modelMatrix, shapeObject.transform.InverseTransposeMatrix,
-             mvpMatrix, this.scene.directionLight, this.depthTexture);
+             mvpMatrix, this.scene.lights, this.webglDepthBuffer.depthMapTex);
 
         var primitiveType = this._gl.TRIANGLES;
         var offset = 0;

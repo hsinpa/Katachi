@@ -5,21 +5,32 @@ import {GetImagePromise} from '../Utility/UtilityMethod';
 export enum SourceType {Texture, Shader, GlMaterial};
 
 export interface GLTextureType {
-    uniformLocation : WebGLUniformLocation,
+    globalType : GLTextureGlobalType,
+    localType : GLTextureLocalType
+}
+
+export interface GLTextureGlobalType {
     texture : WebGLTexture,
-    localIndex : number,
     globalIndex : number
+}
+
+export interface GLTextureLocalType {
+    uniformLocation : WebGLUniformLocation,
+    localIndex : number,
+    texture_key : string
 }
 
 class WebglResource {
     textureCache : Dictionary<string, HTMLImageElement>;
     glResourceCache : Dictionary<string, any>; // Should only inpuce WebGLShader, WebGlProgram
-    glTextureCache : Dictionary<string, GLTextureType>;
+    glLocalTextureCache : Dictionary<string, GLTextureLocalType>;
+    glGlobalTextureCache : Dictionary<string, GLTextureGlobalType>;
 
     constructor() {
         this.textureCache = new Dictionary();
         this.glResourceCache = new Dictionary();
-        this.glTextureCache = new Dictionary();
+        this.glLocalTextureCache = new Dictionary();
+        this.glGlobalTextureCache = new Dictionary();
     }
 
     async PrepareVFShaders(vertFilePath: string, fragFilePath: string) {
@@ -66,25 +77,31 @@ class WebglResource {
         }
     }
 
-    CreateGLTexture(gl : WebGLRenderingContext, width : number, height : number, format : number, data : ArrayBufferView) {
+    CreateGLTexture(gl : WebGLRenderingContext, width : number, height : number, format : number, type : number, data : ArrayBufferView) {
         const targetTexture = gl.createTexture();
 
         gl.bindTexture(gl.TEXTURE_2D, targetTexture);
         
-        gl.texImage2D(gl.TEXTURE_2D, 0, format, width, height, 0, format, gl.UNSIGNED_BYTE, data);
+        gl.texImage2D(gl.TEXTURE_2D, 0, format, width, height, 0, format, type, data);
         
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.MIRRORED_REPEAT);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.MIRRORED_REPEAT);
         
         return targetTexture;
     }
 
     GetGLTextureSource(key : string) {
-        if (this.glTextureCache.containsKey(key)) {
-            return this.glTextureCache.getValue(key);
-        }
-        return null;
+        if (!this.glLocalTextureCache.containsKey(key)) return null;
+
+        let localTexCache = this.glLocalTextureCache.getValue(key);
+
+        if (!this.glGlobalTextureCache.containsKey(localTexCache.texture_key)) return null;
+
+        let globalTexCache = this.glGlobalTextureCache.getValue(localTexCache.texture_key);
+
+        return {globalType : globalTexCache, localType : localTexCache} as GLTextureType;
     }
 
     SaveGLTextureSource(key : string, webglTexture : WebGLTexture,  uniformLocation : WebGLUniformLocation, texBaseIndex : number ){

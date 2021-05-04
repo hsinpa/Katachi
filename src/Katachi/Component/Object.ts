@@ -9,8 +9,4 @@ export default class ObjectBase {
     constructor() {
         this.transform = CreateEmptyTransform();
     }
-
-    SetPosition() {
-        
-    }
 }

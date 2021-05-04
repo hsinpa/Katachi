@@ -140,6 +140,14 @@ class Material {
 
         gl.uniform1i(glTextureDataSet.uniformLocation, glTextureDataSet.localIndex);
     }
+
+    ExecuteUniformTex(gl : WebGLRenderingContext, uniform_name : string, texture :WebGLTexture) {
+        if (!(uniform_name in this.cacheUniformShaderPosition)) return;
+
+        let cacheUnifPoint = this.cacheUniformShaderPosition[uniform_name];
+
+        
+    }
 }
 
 export default Material;
