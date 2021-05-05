@@ -56,7 +56,7 @@ class KatachiBasicDemo {
             
             this.mainCube.SetCustomUniformAttr("u_mainColor", {value : [1, 1, 1, 1], isMatrix : false, function : this.katachi.webglContext.uniform4fv})
             this.mainQuad.SetCustomUniformAttr("u_mainColor", {value : [0, 0, 1, 1], isMatrix : false, function : this.katachi.webglContext.uniform4fv})
-            this.mainFloor.SetCustomUniformAttr("u_mainColor", {value : [0.2, 0.2, 0.2, 1], isMatrix : false, function : this.katachi.webglContext.uniform4fv})
+            this.mainFloor.SetCustomUniformAttr("u_mainColor", {value : [1,1,1, 1], isMatrix : false, function : this.katachi.webglContext.uniform4fv})
         }
     }
 

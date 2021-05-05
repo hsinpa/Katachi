@@ -1,6 +1,7 @@
 export let GLProgramIDs = {
     Standard : "glprogram@standard_material",
-    Unlit : "glprogram@unlit_material"
+    Unlit : "glprogram@unlit_material",
+    DepthMap : "glprogram@depth_material"
 }
 
 export let StandardShaderKey = {

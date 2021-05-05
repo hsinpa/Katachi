@@ -5,4 +5,9 @@ export interface MeshType {
     normal : number[]; //Vector3
     
     glUsageType : number; //ex: gl.STATIC_DRAW
+
+    nativeVertex : Float32Array;
+    nativecolor : Float32Array;
+    nativeUV : Float32Array;
+    nativeNormal : Float32Array;
 }

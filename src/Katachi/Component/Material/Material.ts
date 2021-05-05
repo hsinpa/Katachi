@@ -20,6 +20,8 @@ class Material {
     }
 
     PreloadProperties(gl : WebGLRenderingContext, config : ShaderConfigType) {
+
+        gl.useProgram(this.glProgram);
         this.PreloadAttributeProperties(gl, config.attributes);
         this.PreloadUniformProperties(gl, config.uniforms);
         this.PreloadUniformTexture(gl, config.texture);
@@ -29,13 +31,13 @@ class Material {
     private PreloadAttributeProperties(gl : WebGLRenderingContext, properties : ShaderAttributConfigType) {
         Object.keys(properties).forEach(key => {
             var attributes = gl.getAttribLocation(this.glProgram, key);
-            let buffer = gl.createBuffer();
 
-            //If this data won't change anymore, and data value is number array
-            // if (properties[key].drawType == gl.STATIC_DRAW && properties[key].value != null) {
-            gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-
-            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array((properties[key].value as number[]) ), gl.STATIC_DRAW);
+            let buffer : WebGLBuffer = gl.createBuffer();
+            if (properties[key].value != null && properties[key].value.length > 0) {            
+                gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    
+                gl.bufferData(gl.ARRAY_BUFFER, new Float32Array((properties[key].value as number[]) ), gl.STATIC_DRAW);    
+            }
             
             this.cacheAttrShaderPosition[key] = {position_id : attributes, buffer : buffer, vertexPointer : properties[key].vertexPointer};
         });
@@ -66,24 +68,29 @@ class Material {
                 this.cacheUniformShaderPosition[properties[i].id] = uniform;
                 
                 let key = this.id+properties[i].id;
+                
                 let textureKey = (properties[i].texture === undefined) ? key : properties[i].texture;
 
                 this.glResource.SaveGLTextureSource(key, textureKey, uniform);
 
                 if (!this.glResource.glGlobalTextureCache.containsKey(textureKey)) {
                     let texture = gl.createTexture();
+
+                    let cache = this.glResource.SaveGlobalTextureSource(textureKey, texture, gl.TEXTURE0);
+
+                    gl.activeTexture(cache.globalIndex);
                     gl.bindTexture(gl.TEXTURE_2D, texture);
         
                     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE,
                                   new Uint8Array([255, 255, 255, 255])); 
-    
-                    this.glResource.SaveGlobalTextureSource(textureKey, texture, gl.TEXTURE0);
+
+                    gl.uniform1i(uniform, cache.globalIndex - gl.TEXTURE0); 
                 }
             }
         }
     }
 
-    ExecuteAttributeProp(gl : WebGLRenderingContext, attribute_name : string, dynamicArray? : number[]) {
+    ExecuteAttributeProp(gl : WebGLRenderingContext, attribute_name : string, dynamicArray? : Float32Array) {
         if (!(attribute_name in this.cacheAttrShaderPosition)) return;
 
         let cacheAttr = this.cacheAttrShaderPosition[attribute_name];
@@ -96,7 +103,7 @@ class Material {
         gl.bindBuffer(gl.ARRAY_BUFFER, cacheAttr.buffer);
 
         if (dynamicArray != null) {
-            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(dynamicArray), gl.DYNAMIC_DRAW);
+            gl.bufferData(gl.ARRAY_BUFFER, dynamicArray, gl.DYNAMIC_DRAW);
         }
 
         // Tell the attribute how to get data out of positionBuffer (ARRAY_BUFFER)
@@ -129,7 +136,7 @@ class Material {
 
     ExecuteUniformSprite(gl : WebGLRenderingContext, uniform_name : string, sprite :HTMLImageElement) {
         //If texture path is not update, then ignore
-        let glTextureDataSet = this.glResource.GetGLTextureSource(this.id+uniform_name);
+        let glTextureDataSet = this.glResource.GetGLTextureSource(this.id+uniform_name, gl.TEXTURE0);
 
         if (glTextureDataSet == null) return;
 
@@ -150,12 +157,14 @@ class Material {
         gl.uniform1i(glTextureDataSet.localType.uniformLocation, glTextureDataSet.localType.localIndex);
     }
 
-    ExecuteUniformTex(gl : WebGLRenderingContext, uniform_name : string) {
-        let glTextureDataSet = this.glResource.GetGLTextureSource(this.id+uniform_name);
+    ExecuteUniformTex(gl : WebGLRenderingContext, uniform_name : string, glTexture : WebGLTexture) {
+        let glTextureDataSet = this.glResource.GetGLTextureSource(this.id+uniform_name, gl.TEXTURE0 );
 
         if (glTextureDataSet == null) return;
 
+        //console.log(uniform_name+", "+ glTextureDataSet.localType.texture_key +", "+glTextureDataSet.globalType.globalIndex +", " + glTextureDataSet.localType.localIndex );
         gl.activeTexture(glTextureDataSet.globalType.globalIndex);      
+
         gl.bindTexture(gl.TEXTURE_2D, glTextureDataSet.globalType.texture);
 
         gl.uniform1i(glTextureDataSet.localType.uniformLocation, glTextureDataSet.localType.localIndex);

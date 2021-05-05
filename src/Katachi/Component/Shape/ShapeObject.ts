@@ -54,45 +54,43 @@ class ShapeObject extends ObjectInterface {
     }
     
 //#region Process During render time
-    ProcessMaterialAttr(gl : WebGLRenderingContext) {
-        this.material.ExecuteAttributeProp(gl, DefaultVertexShaderParameter.vertex );
-        this.material.ExecuteAttributeProp(gl, DefaultVertexShaderParameter.color );
-        this.material.ExecuteAttributeProp(gl, DefaultVertexShaderParameter.uv );
-        this.material.ExecuteAttributeProp(gl, DefaultVertexShaderParameter.normal );    
+    ProcessMaterialAttr(gl : WebGLRenderingContext, material : Material) {
+        material.ExecuteAttributeProp(gl, DefaultVertexShaderParameter.vertex, this.mesh.meshData.nativeVertex );
+        material.ExecuteAttributeProp(gl, DefaultVertexShaderParameter.color, this.mesh.meshData.nativecolor );
+        material.ExecuteAttributeProp(gl, DefaultVertexShaderParameter.uv, this.mesh.meshData.nativeUV );
+        material.ExecuteAttributeProp(gl, DefaultVertexShaderParameter.normal, this.mesh.meshData.nativeNormal );    
     }
 
-    ProcessMaterialUniform(gl : WebGLRenderingContext, time : number, worldMatrix : mat4, modelInverseTMatrix  : mat4, mvpMatrix : mat4, light: Light,
+    ProcessMaterialUniform(gl : WebGLRenderingContext, material : Material, time : number, worldMatrix : mat4, modelInverseTMatrix  : mat4, mvpMatrix : mat4, light: Light,
         depthTexture : WebGLTexture) {
         //Default System attr, color and time
-        this.material.ExecuteUniformProp(DefaultVertexShaderParameter.time, time, gl.uniform1f.bind(gl));
-        this.material.ExecuteUniformProp(DefaultVertexShaderParameter.modelMatrix, worldMatrix, gl.uniformMatrix4fv.bind(gl), true);
-        this.material.ExecuteUniformProp(DefaultVertexShaderParameter.inverseTransposeModelMatrix, modelInverseTMatrix, gl.uniformMatrix4fv.bind(gl), true);
-        this.material.ExecuteUniformProp(DefaultVertexShaderParameter.modelViewProjectionMatrix, mvpMatrix, gl.uniformMatrix4fv.bind(gl), true);
+        material.ExecuteUniformProp(DefaultVertexShaderParameter.time, time, gl.uniform1f.bind(gl));
+        material.ExecuteUniformProp(DefaultVertexShaderParameter.modelMatrix, worldMatrix, gl.uniformMatrix4fv.bind(gl), true);
+        material.ExecuteUniformProp(DefaultVertexShaderParameter.inverseTransposeModelMatrix, modelInverseTMatrix, gl.uniformMatrix4fv.bind(gl), true);
+        material.ExecuteUniformProp(DefaultVertexShaderParameter.modelViewProjectionMatrix, mvpMatrix, gl.uniformMatrix4fv.bind(gl), true);
 
         //Might be null, if user remove it
         if (light != null) {
-            this.material.ExecuteUniformProp(DefaultVertexShaderParameter.directionLightDir, light.directionLigth.transform.transformVector.GetTransformVector().forward, gl.uniform3fv.bind(gl));
-            this.material.ExecuteUniformProp(DefaultVertexShaderParameter.directionLightColor, light.directionLigth.color, gl.uniform4fv.bind(gl));    
-            this.material.ExecuteUniformProp(DefaultVertexShaderParameter.ambientLightColor, light.ambient_light, gl.uniform4fv.bind(gl));    
+            material.ExecuteUniformProp(DefaultVertexShaderParameter.directionLightDir, light.directionLigth.transform.transformVector.GetTransformVector().forward, gl.uniform3fv.bind(gl));
+            material.ExecuteUniformProp(DefaultVertexShaderParameter.directionLightColor, light.directionLigth.color, gl.uniform4fv.bind(gl));    
+            material.ExecuteUniformProp(DefaultVertexShaderParameter.ambientLightColor, light.ambient_light, gl.uniform4fv.bind(gl));    
         }
 
         if (depthTexture != null) {
-
-            this.material.ExecuteUniformTex(gl, DefaultVertexShaderParameter.depthMapTexture);    
-
+            material.ExecuteUniformTex(gl, DefaultVertexShaderParameter.depthMapTexture, depthTexture);    
+        
+            //Custom uniform, define by external user
+            Object.keys(this.matUniformAttributes).forEach(key => {
+                if (this.matUniformAttributes[key].value instanceof HTMLImageElement) {
+                    material.ExecuteUniformSprite(gl, key, this.matUniformAttributes[key].value);    
+                } else {
+                    material.ExecuteUniformProp(key, this.matUniformAttributes[key].value, this.matUniformAttributes[key].function.bind(gl), this.matUniformAttributes[key].isMatrix);
+                }
+            });
+    
+            //Empty all custom uniform config
+            this.matUniformAttributes = {};        
         }
-
-        //Custom uniform, define by external user
-        Object.keys(this.matUniformAttributes).forEach(key => {
-            if (this.matUniformAttributes[key].value instanceof HTMLImageElement) {
-                this.material.ExecuteUniformSprite(gl, key, this.matUniformAttributes[key].value);    
-            } else {
-                this.material.ExecuteUniformProp(key, this.matUniformAttributes[key].value, this.matUniformAttributes[key].function.bind(gl), this.matUniformAttributes[key].isMatrix);
-            }
-        });
-
-        //Empty all custom uniform config
-        this.matUniformAttributes = {};
     }
 
 //#endregion

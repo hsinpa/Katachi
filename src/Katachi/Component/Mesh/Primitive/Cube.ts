@@ -1,14 +1,24 @@
 import {MeshType} from '../MeshTypes';
 
 export default function CreateQuadMesh() : MeshType{
-    return {
-        vertex : GetCubeVertex(),
-        color : GetColor([1,1,1,1], 36),
-        uv : GetCubeUV(6),
+    let vertex = GetCubeVertex();
+    let color = GetColor([1,1,1,1], 36);
+    let uv = GetCubeUV(6);
 
-        //Front, Right, Left, Top, Bottom, Back
-        normal : GetCubeNormal([0, 0, 1], [1, 0, 0],  [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0,0,-1]),
-        glUsageType : WebGLRenderingContext.STATIC_DRAW
+    //Front, Right, Left, Top, Bottom, Back
+    let normal = GetCubeNormal([0, 0, 1], [1, 0, 0],  [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0,0,-1]);
+
+    return {
+        vertex : vertex,
+        color : color,
+        uv : uv,
+        normal : normal,
+        glUsageType : WebGLRenderingContext.STATIC_DRAW,
+
+        nativeVertex : new Float32Array(vertex),
+        nativeNormal : new Float32Array(normal),
+        nativeUV : new Float32Array(uv),
+        nativecolor : new Float32Array(color)
     }
 }
 

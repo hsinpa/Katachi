@@ -93,7 +93,7 @@ class WebglResource {
         return targetTexture;
     }
 
-    GetGLTextureSource(key : string) {
+    GetGLTextureSource(key : string, localTextureOffset : number) {
         if (!this.glLocalTextureCache.containsKey(key)) return null;
 
         let localTexCache = this.glLocalTextureCache.getValue(key);
@@ -101,18 +101,23 @@ class WebglResource {
         if (!this.glGlobalTextureCache.containsKey(localTexCache.texture_key)) return null;
 
         let globalTexCache = this.glGlobalTextureCache.getValue(localTexCache.texture_key);
+        localTexCache.localIndex = globalTexCache.globalIndex - localTextureOffset;
 
         return {globalType : globalTexCache, localType : localTexCache} as GLTextureType;
     }
 
     SaveGlobalTextureSource(key : string, webglTexture : WebGLTexture, texBaseIndex : number) {
         let currentIndex = texBaseIndex + this.glGlobalTextureCache.size();
-        this.glGlobalTextureCache.setValue(key, {texture : webglTexture, globalIndex : currentIndex});
+        let globalTextureType : GLTextureGlobalType = {texture : webglTexture, globalIndex : currentIndex}; 
+
+        this.glGlobalTextureCache.setValue(key, globalTextureType);
+        return globalTextureType;
     }
 
     SaveGLTextureSource(key : string, globalTextureKey : string,  uniformLocation : WebGLUniformLocation ){
-        let currentIndex = this.glGlobalTextureCache.size();
-        return this.glLocalTextureCache.setValue(key, {uniformLocation : uniformLocation, localIndex : currentIndex, texture_key : globalTextureKey});
+        let localTextureType : GLTextureLocalType = {uniformLocation : uniformLocation, localIndex : -1, texture_key : globalTextureKey};
+        this.glLocalTextureCache.setValue(key, localTextureType);
+        return localTextureType;
     }
 }
 

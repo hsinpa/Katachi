@@ -17,22 +17,25 @@ class Mesh {
 
     public SetVertex(vertex : number[]) {
         this._meshData.vertex = vertex;
+        this._meshData.nativeVertex = new Float32Array(vertex);
     }
 
     public SetColor(color : number[]) {
         this._meshData.color = color;
+        this._meshData.nativecolor = new Float32Array(color);
     }
 
     //Vector2
     public SetUV(uv : number[]) {
         this._meshData.uv = uv;
+        this._meshData.nativeUV = new Float32Array(uv);
     }
 
     //Vector3
     public SetNormal(normal : number[]) {
         this._meshData.normal = normal;
-    }
-    
+        this._meshData.nativeNormal = new Float32Array(normal);
+    }    
 }
 
 export default Mesh;
