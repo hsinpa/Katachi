@@ -29,7 +29,7 @@ export function GetDefaultMaterialConfig(gl : WebGLRenderingContext) {
         uniforms : [DefaultVertexShaderParameter.time, DefaultVertexShaderParameter.mainColor, DefaultVertexShaderParameter.mainTex,  
                     DefaultVertexShaderParameter.modelMatrix, DefaultVertexShaderParameter.modelViewProjectionMatrix, DefaultVertexShaderParameter.inverseTransposeModelMatrix,
                     DefaultVertexShaderParameter.directionLightColor, DefaultVertexShaderParameter.directionLightDir, DefaultVertexShaderParameter.ambientLightColor,
-                    DefaultVertexShaderParameter.lightSpaceMVPMatrix
+                    DefaultVertexShaderParameter.lightSpaceMVPMatrix, DefaultVertexShaderParameter.depthMapTex_Texel, DefaultVertexShaderParameter.mainTex_Texel
                 ],
 
         texture : [{id : DefaultVertexShaderParameter.mainTex}, {id : DefaultVertexShaderParameter.depthMapTexture, texture : DefaultVertexShaderParameter.depthMapTexture}],

@@ -15,7 +15,7 @@ export class Projection {
     private _projectionMatrix: mat4;
     private _projectionType : ProjectionType;
 
-    public farClipPoint : number = 10;
+    public farClipPoint : number = 15;
     public nearClipPoint : number = 0.3;
 
     private lookUpPoint : vec3;

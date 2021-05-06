@@ -13,36 +13,66 @@
   uniform vec3 u_directionLightDir;
   uniform vec4 u_directionLightColor;
   uniform vec4 u_ambientLightColor;
+  uniform vec2 u_depthTex_Texel;
 
-  float ShadowCalculation(vec4 lightSpacePos) {
-    vec3 projCoords = lightSpacePos.xyz / lightSpacePos.w;
-    projCoords = projCoords * 0.5 + 0.5; // change to UV coordinate
+  //Percentage-closer filtering
+  float GetPCFValue(float currentDepth, vec3 projCoords, bool inRange) {
+    float bias = -0.006;
+    float shadow = 0.0;
 
-    float closestDepth = texture2D(u_depthTex, projCoords.xy).r;   
-
-    // get depth of current fragment from light's perspective
-    float currentDepth = projCoords.z;
-    // check whether current frag pos is in shadow
-    float shadow = currentDepth > closestDepth  ? 1.0 : 0.0;
-
+    for(int x = -1; x <= 1; ++x)
+    {
+        for(int y = -1; y <= 1; ++y)
+        {
+            float pcfDepth = texture2D(u_depthTex, projCoords.xy + vec2(x, y) * u_depthTex_Texel).r; 
+            shadow +=  (inRange && currentDepth + bias > pcfDepth) ? 0.0 : 1.0;        
+        }
+    }
+    shadow /= 9.0;
     return shadow;
+  }
+
+  vec4 ShadowMap(vec4 colorTex) {
+    vec3 projCoords = v_lightSpacePos.xyz / v_lightSpacePos.w;
+        projCoords = projCoords * 0.5 + 0.5; // change to UV coordinate
+
+    bool inRange = 
+      projCoords.x >= 0.0 &&
+      projCoords.x <= 1.0 &&
+      projCoords.y >= 0.0 &&
+      projCoords.y <= 1.0;
+
+    vec4 projectedTexColor = vec4(texture2D(u_depthTex, projCoords.xy).rrr, 1);
+    float projectedAmount = inRange ? 1.0 : 0.0;
+
+    return mix(colorTex, projectedTexColor, projectedAmount);
+  }
+
+
+  float ShadowCalculation() {
+    vec3 projCoords = v_lightSpacePos.xyz / v_lightSpacePos.w;
+    projCoords = projCoords * 0.5 + 0.5; // change to UV coordinate
+    float currentDepth = projCoords.z;
+
+    bool inRange = 
+      projCoords.x >= 0.0 &&
+      projCoords.x <= 1.0 &&
+      projCoords.y >= 0.0 &&
+      projCoords.y <= 1.0;
+
+    return GetPCFValue(currentDepth, projCoords, inRange);
   }
 
   void main () {
     vec4 tex = texture2D(u_mainTex, v_uv);
-    vec4 depthTex = texture2D(u_depthTex, v_uv);
     
-    vec4 depthColor = vec4(depthTex.x, depthTex.x, depthTex.x, 1.0);
-
+    float shadowValue = ShadowCalculation();
     float lightAngle = max( dot(-u_directionLightDir, v_normal), 0.0);
-
-    float shadow = 1.0 - ShadowCalculation(v_lightSpacePos);       
-
-    vec4 color = (u_directionLightColor * lightAngle * tex) + (shadow * u_ambientLightColor * tex) * u_mainColor;
+    vec4 color = (u_directionLightColor * lightAngle * tex) + ( shadowValue * u_ambientLightColor * tex) ;
     color.r = min(1.0, color.r);
     color.g = min(1.0, color.g);
     color.b = min(1.0, color.b);
     color.a = 1.0;
 
-    gl_FragColor = vec4(shadow, shadow, shadow, 1.0); //color; //vec4(v_uv.x, v_uv.y, 0.0, 1.0);
+    gl_FragColor = color; //vec4(v_uv.x, v_uv.y, 0.0, 1.0);
   }

@@ -4,7 +4,7 @@ import Material from '../Material/Material';
 import {DefaultVertexShaderParameter, UniformProperties, UniformAttrType, GLUniformTextures} from '../Material/MaterialTypes'
 import ObjectInterface from '../Object';
 import Camera from '../Camera/Camera';
-import { mat4 } from 'gl-matrix';
+import { mat4, vec2 } from 'gl-matrix';
 import WebglResource from '../../WebGL/WebglResource';
 import DirectionLight from '../Light/DirectionLight';
 import Light from '../Light/Light';
@@ -62,7 +62,7 @@ class ShapeObject extends ObjectInterface {
     }
 
     ProcessMaterialUniform(gl : WebGLRenderingContext, material : Material, time : number, worldMatrix : mat4, modelInverseTMatrix  : mat4, mvpMatrix : mat4, light: Light,
-        depthTexture : WebGLTexture) {
+        depthTexture : WebGLTexture, depthTextureTexel : vec2) {
         //Default System attr, color and time
         material.ExecuteUniformProp(DefaultVertexShaderParameter.time, time, gl.uniform1f.bind(gl));
         material.ExecuteUniformProp(DefaultVertexShaderParameter.modelMatrix, worldMatrix, gl.uniformMatrix4fv.bind(gl), true);
@@ -80,11 +80,15 @@ class ShapeObject extends ObjectInterface {
 
         if (depthTexture != null) {
             material.ExecuteUniformTex(gl, DefaultVertexShaderParameter.depthMapTexture, depthTexture);    
-        
+            material.ExecuteUniformProp(DefaultVertexShaderParameter.depthMapTex_Texel, depthTextureTexel, gl.uniform2fv.bind(gl));    
+
             //Custom uniform, define by external user
             Object.keys(this.matUniformAttributes).forEach(key => {
                 if (this.matUniformAttributes[key].value instanceof HTMLImageElement) {
-                    material.ExecuteUniformSprite(gl, key, this.matUniformAttributes[key].value);    
+                    let htmlSprite = this.matUniformAttributes[key].value as HTMLImageElement;
+
+                    material.ExecuteUniformSprite(gl, key, this.matUniformAttributes[key].value); 
+                    material.ExecuteUniformProp(DefaultVertexShaderParameter.mainTex_Texel, vec2.fromValues(1 / htmlSprite.width, 1 / htmlSprite.height), gl.uniform2fv.bind(gl));    
                 } else {
                     material.ExecuteUniformProp(key, this.matUniformAttributes[key].value, this.matUniformAttributes[key].function.bind(gl), this.matUniformAttributes[key].isMatrix);
                 }

@@ -14,6 +14,7 @@ uniform mat4 u_modelMatrix;
 uniform mat4 u_inverseTransposeModelMatrix;
 uniform mat4 u_MVPMatrix;
 uniform mat4 u_lightSpaceMVPMatrix;
+uniform sampler2D u_depthTex;
 
 void main () {
 

@@ -7,7 +7,7 @@ import MeshManager from './Component/Mesh/MeshManager';
 import Mesh from './Component/Mesh/Mesh';
 import ShapeBuilder from './Component/Shape/ShapeBuilder';
 import Scene from './Component/Scene';
-import { mat4 } from 'gl-matrix';
+import { mat4, vec2 } from 'gl-matrix';
 import ShapeObject from './Component/Shape/ShapeObject';
 import WebGLDepthBuffer from './WebGL/WebGLDepthBuffer';
 import { Projection } from './Component/Projection';
@@ -30,6 +30,7 @@ class Katachi extends WebglCanvas {
     
     private readonly targetTextureWidth = 256;
     private readonly targetTextureHeight = 256;
+    private readonly targetTextureTexel = vec2.fromValues(1 / this.targetTextureWidth, 1 / this.targetTextureHeight);
     private currentFrameBuffer : WebGLFramebuffer;
 
     public time : number;
@@ -63,6 +64,8 @@ class Katachi extends WebglCanvas {
 
         this.webglDepthBuffer.PrepareDepthFrameBuffer(this.targetTextureWidth, this.targetTextureHeight);
         this.webglDepthBuffer.CacheDepthMaterial();
+
+        console.log(this.targetTextureTexel);
 
         window.requestAnimationFrame(this.PerformGameLoop.bind(this));
 
@@ -113,7 +116,7 @@ class Katachi extends WebglCanvas {
         shapeObject.ProcessMaterialAttr(this._gl, material);
 
         shapeObject.ProcessMaterialUniform(this._gl, material, this.time, shapeObject.transform.modelMatrix, shapeObject.transform.InverseTransposeMatrix,
-             mvpMatrix, this.scene.lights, (this.currentFrameBuffer == null) ? this.webglDepthBuffer.depthMapTex : null);
+             mvpMatrix, this.scene.lights, (this.currentFrameBuffer == null) ? this.webglDepthBuffer.depthMapTex : null, this.targetTextureTexel);
 
         var primitiveType = this._gl.TRIANGLES;
         var offset = 0;

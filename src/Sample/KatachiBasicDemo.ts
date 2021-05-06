@@ -43,9 +43,9 @@ class KatachiBasicDemo {
             this.mainCube.transform.Scale(0.5);
             this.mainCube.transform.position[2] = -2;
 
-            this.mainFloor.transform.rotation[0] = Math.PI/2;
+            this.mainFloor.transform.rotation[0] = Math.PI*1.5;
             this.mainFloor.transform.position[1] = -0.5;
-            this.mainFloor.transform.Scale(20);
+            this.mainFloor.transform.Scale(5);
 
             katachi.scene.InsertShapeObj(this.mainCube);
             katachi.scene.InsertShapeObj(this.mainQuad);

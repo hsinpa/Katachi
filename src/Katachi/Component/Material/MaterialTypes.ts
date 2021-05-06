@@ -56,15 +56,18 @@ export const DefaultVertexShaderParameter = {
     time : "u_time",
     mainColor : "u_mainColor",
     mainTex : "u_mainTex",
+    mainTex_Texel : "u_mainTex_Texel",
     modelMatrix : "u_modelMatrix",
     inverseTransposeModelMatrix : "u_inverseTransposeModelMatrix",
     modelViewProjectionMatrix : "u_MVPMatrix",
+
 
     //Uniform Light
     directionLightDir : "u_directionLightDir",
     directionLightColor : "u_directionLightColor",
     ambientLightColor : "u_ambientLightColor",
     depthMapTexture : 'u_depthTex',
+    depthMapTex_Texel : "u_depthTex_Texel",
     lightSpaceMVPMatrix : 'u_lightSpaceMVPMatrix'
 }
 
