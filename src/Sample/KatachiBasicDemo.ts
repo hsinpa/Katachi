@@ -88,7 +88,9 @@ class KatachiBasicDemo {
         this.inputHandler.OnUpdate();
 
         if (this.katachi == null|| this.mainQuad == null) return;
-        //this.mainQuad.transform.rotation[0] += timeSecond * 0.02;
+
+        // console.log(this.katachi.scene.lights.directionLigth.transform.rotation[0]);
+        //this.mainCube.transform.rotation[1] += 0.01;
 
         // let camX = Math.sin(timeSecond) * 2;
         // let camZ = Math.cos(timeSecond) * 2;

@@ -8,6 +8,8 @@ export class Projection {
     private transform : Transform;
 
     private _viewMatrix : mat4;
+    private _spaceMatrix : mat4;
+
     private upDirMatrix : vec3;
 
     private _projectionMatrix: mat4;
@@ -32,6 +34,10 @@ export class Projection {
         vec3.add(this.lookUpPoint, this.transform.position, v.forward);
         //console.log(this.lookUpPoint);
         return mat4.lookAt(this._viewMatrix, this.transform.position, this.lookUpPoint, this.upDirMatrix);
+    }
+
+    public get spaceMatrix() {
+        return mat4.mul(this._spaceMatrix, this.projectionMatrix, this.viewMatrix);
     }
 
     public set projectionType(t : ProjectionType) {
@@ -62,6 +68,7 @@ export class Projection {
         this.upDirMatrix = vec3.fromValues(0, 1, 0);
         this._viewMatrix = mat4.create();
         this._projectionMatrix = mat4.create();
+        this._spaceMatrix = mat4.create();
 
         this.projectionType = projectionType;
     }

@@ -64,7 +64,8 @@ export const DefaultVertexShaderParameter = {
     directionLightDir : "u_directionLightDir",
     directionLightColor : "u_directionLightColor",
     ambientLightColor : "u_ambientLightColor",
-    depthMapTexture : 'u_depthTex'
+    depthMapTexture : 'u_depthTex',
+    lightSpaceMVPMatrix : 'u_lightSpaceMVPMatrix'
 }
 
 export interface UniformTextureDefine {

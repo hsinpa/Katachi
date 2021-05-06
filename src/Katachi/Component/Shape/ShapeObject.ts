@@ -73,6 +73,8 @@ class ShapeObject extends ObjectInterface {
         if (light != null) {
             material.ExecuteUniformProp(DefaultVertexShaderParameter.directionLightDir, light.directionLigth.transform.transformVector.GetTransformVector().forward, gl.uniform3fv.bind(gl));
             material.ExecuteUniformProp(DefaultVertexShaderParameter.directionLightColor, light.directionLigth.color, gl.uniform4fv.bind(gl));    
+
+            material.ExecuteUniformProp(DefaultVertexShaderParameter.lightSpaceMVPMatrix, light.directionLigth.projection.spaceMatrix, gl.uniformMatrix4fv.bind(gl), true);
             material.ExecuteUniformProp(DefaultVertexShaderParameter.ambientLightColor, light.ambient_light, gl.uniform4fv.bind(gl));    
         }
 

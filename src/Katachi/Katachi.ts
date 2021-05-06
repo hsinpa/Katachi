@@ -78,7 +78,7 @@ class Katachi extends WebglCanvas {
             this.UpdateLoopCallback(this.time);
 
         //Depth Map Rendering
-        this.DrawCanvas(this.webglDepthBuffer.depthFrameBuffer, this.webglDepthBuffer.depthMaterial,this.scene.camera.projection, this.targetTextureWidth, this.targetTextureHeight);
+        this.DrawCanvas(this.webglDepthBuffer.depthFrameBuffer, this.webglDepthBuffer.depthMaterial,this.scene.lights.directionLigth.projection, this.targetTextureWidth, this.targetTextureHeight);
 
         //Actual rendering
         this.DrawCanvas(null, null, this.scene.camera.projection, this._gl.canvas.width, this._gl.canvas.height);

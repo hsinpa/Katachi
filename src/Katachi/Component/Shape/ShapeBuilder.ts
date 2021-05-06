@@ -44,7 +44,7 @@ class ShapeBuilder {
 
     BuildQuad() : ShapeObject {
         let mesh = this._meshManager.CreateQuad();
-        let shaderSet = this._materialManager.GetGlShaderSet(GLProgramIDs.Unlit);
+        let shaderSet = this._materialManager.GetGlShaderSet(GLProgramIDs.Standard);
         let material = this._materialManager.CreateMaterial(shaderSet.vertShader, shaderSet.fragShader);
         return this.Build("Quad", mesh, material);
     }
