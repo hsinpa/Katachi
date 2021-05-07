@@ -5,10 +5,6 @@ export interface ShaderRawSourceType {
 
 export interface KatachiConfigJson {
     canvas_dom_query : string,
-    canvas_height : number,
-    canvas_width : number,
-    canvas_type : number, //0 = Base on canvas height/width parameter; 1 = Relative to parent dom
-
     shaders : KatachiShaderType[]
 }
 

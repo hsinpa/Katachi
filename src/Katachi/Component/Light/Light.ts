@@ -1,4 +1,5 @@
-import { vec4 } from 'gl-matrix';
+import { vec3, vec4 } from 'gl-matrix';
+import Transform from '../Transform/Transform';
 import DirectionLight from './DirectionLight';
 
 export default class Light {
@@ -8,8 +9,12 @@ export default class Light {
     
     constructor() {
         this.directionLigth = new DirectionLight();
-        this.ambient_light = vec4.fromValues(0.1, 0.1, 0.1, 0);
+        this.ambient_light = vec4.fromValues(0.2, 0.2, 0.2, 1);
     }
 
+    public SyncLightRelativePosToCamera(cameraTransform : Transform) {
+        vec3.add(this.directionLigth.transform.position, this.directionLigth.offsetPostion, cameraTransform.position);
+        this.directionLigth.transform.position[1] = this.directionLigth.offsetPostion[1]; // Fix Y position
+    }
 
 }

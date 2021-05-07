@@ -1,4 +1,4 @@
-body {
+html, body {
     height: 100%;
     width: 100%;
     background-color: #ebf0f3;
@@ -6,9 +6,10 @@ body {
     padding: 0px;
 }
 
-.control_panel {
-    position: relative;
-    margin-left: 1rem;
+#webgl_contorlpanel {
+    position: absolute;
+    top : 0px;
+    display: none;
     
     .panels {
         display: flex;
@@ -32,3 +33,8 @@ body {
 //     top : 1rem;
 //     left : 1rem;
 // }
+
+#webgl_canvas {
+    width: 100%;
+    height: 100%;
+}

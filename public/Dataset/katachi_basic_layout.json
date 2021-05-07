@@ -1,9 +1,5 @@
 {
     "canvas_dom_query" : "#webgl_canvas",
-    "canvas_height" : 600,
-    "canvas_width" : 850,
-    "canvas_type" : 0,
-
     "shaders" : [
         {
             "id" : "glprogram@standard_material",

@@ -7,15 +7,15 @@ export default class DirectionLight extends ObjectInterface {
     color : vec4;
     projection : Projection;
 
+    offsetPostion : vec3;
+
     constructor() {
         super(); 
 
         this.color = vec4.fromValues(1,1,1,1); // White light by default
 
         //Set Default position
-        this.transform.position[0] = 3; 
-        this.transform.position[1] = 9; 
-        this.transform.position[0] = 3; 
+        this.offsetPostion = vec3.fromValues(3, 9, 3);
 
         //Set default light direction in radian
         this.transform.rotation[0] = Math.PI * 0.3;

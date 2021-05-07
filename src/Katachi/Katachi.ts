@@ -28,8 +28,8 @@ class Katachi extends WebglCanvas {
 
     private previousTimeStamp : number = 0;
     
-    private readonly targetTextureWidth = 256;
-    private readonly targetTextureHeight = 256;
+    private readonly targetTextureWidth = 512;
+    private readonly targetTextureHeight = 512;
     private readonly targetTextureTexel = vec2.fromValues(1 / this.targetTextureWidth, 1 / this.targetTextureHeight);
     private currentFrameBuffer : WebGLFramebuffer;
 
@@ -65,7 +65,10 @@ class Katachi extends WebglCanvas {
         this.webglDepthBuffer.PrepareDepthFrameBuffer(this.targetTextureWidth, this.targetTextureHeight);
         this.webglDepthBuffer.CacheDepthMaterial();
 
-        console.log(this.targetTextureTexel);
+        console.log(this._canvasDom.clientWidth);
+        console.log(this._canvasDom.clientHeight);
+
+        console.log(this._gl.canvas.width);
 
         window.requestAnimationFrame(this.PerformGameLoop.bind(this));
 
@@ -79,6 +82,10 @@ class Katachi extends WebglCanvas {
 
         if (this.UpdateLoopCallback != null)
             this.UpdateLoopCallback(this.time);
+
+        //Update Light map, per half second, to avoid glitching
+        if (this.scene.lights != null && this.time % 0.5 > 0.45)
+            this.scene.lights.SyncLightRelativePosToCamera(this.scene.camera.transform);
 
         //Depth Map Rendering
         this.DrawCanvas(this.webglDepthBuffer.depthFrameBuffer, this.webglDepthBuffer.depthMaterial,this.scene.lights.directionLigth.projection, this.targetTextureWidth, this.targetTextureHeight);

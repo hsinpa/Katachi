@@ -97,6 +97,4 @@ export class Projection {
 
         return mat4.perspective(this._projectionMatrix, foxy, aspectRatio, near, far);
     }
-
-
 }

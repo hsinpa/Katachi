@@ -15,21 +15,29 @@
   uniform vec4 u_ambientLightColor;
   uniform vec2 u_depthTex_Texel;
 
-  //Percentage-closer filtering
-  float GetPCFValue(float currentDepth, vec3 projCoords, bool inRange) {
+  #define PCF_SHADOW true  
+
+  float GetShadowValue(float currentDepth, vec3 projCoords, bool inRange) {
     float bias = -0.006;
     float shadow = 0.0;
 
-    for(int x = -1; x <= 1; ++x)
-    {
-        for(int y = -1; y <= 1; ++y)
-        {
-            float pcfDepth = texture2D(u_depthTex, projCoords.xy + vec2(x, y) * u_depthTex_Texel).r; 
-            shadow +=  (inRange && currentDepth + bias > pcfDepth) ? 0.0 : 1.0;        
-        }
+    //Percentage-closer filtering
+    if (PCF_SHADOW) {
+      for(int x = -1; x <= 1; ++x)
+      {
+          for(int y = -1; y <= 1; ++y)
+          {
+              float pcfDepth = texture2D(u_depthTex, projCoords.xy + vec2(x, y) * u_depthTex_Texel).r; 
+              shadow +=  (inRange && currentDepth + bias > pcfDepth) ? 0.0 : 1.0;        
+          }
+      }
+      shadow /= 9.0;
+      return shadow;
     }
-    shadow /= 9.0;
-    return shadow;
+
+    //Hard edge shadow
+    float depth = texture2D(u_depthTex, projCoords.xy).r; 
+    return  (inRange && currentDepth + bias > depth) ? 0.0 : 1.0;        
   }
 
   vec4 ShadowMap(vec4 colorTex) {
@@ -60,7 +68,7 @@
       projCoords.y >= 0.0 &&
       projCoords.y <= 1.0;
 
-    return GetPCFValue(currentDepth, projCoords, inRange);
+    return GetShadowValue(currentDepth, projCoords, inRange);
   }
 
   void main () {
@@ -68,7 +76,7 @@
     
     float shadowValue = ShadowCalculation();
     float lightAngle = max( dot(-u_directionLightDir, v_normal), 0.0);
-    vec4 color = (u_directionLightColor * lightAngle * tex) + ( shadowValue * u_ambientLightColor * tex) ;
+    vec4 color = (u_directionLightColor * lightAngle * tex * shadowValue ) + (u_ambientLightColor * tex) * u_mainColor;
     color.r = min(1.0, color.r);
     color.g = min(1.0, color.g);
     color.b = min(1.0, color.b);
