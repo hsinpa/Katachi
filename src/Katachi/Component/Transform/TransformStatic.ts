@@ -17,3 +17,8 @@ export const Vector : VectorStaticType = {
     right : vec3.fromValues(1, 0,0),
     forward : vec3.fromValues(0, 0, 1)
 }
+
+export const Calculation = Object.freeze({
+    Radian2Degree : 180 / Math.PI,
+    Degree2Radian : 180 / 180 / Math.PI
+});
