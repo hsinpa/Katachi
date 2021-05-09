@@ -52,6 +52,8 @@ class WebglCanvas {
         displayWidth = (displayWidth >= displayHeight) ? this.maxDrawBufferSize : (this.maxDrawBufferSize * displayWidth / displayHeight);
       }
 
+      console.log(displayWidth +", " + displayHeight);
+
       this._canvasDom.width = displayWidth;
       this._canvasDom.height = displayHeight;
   }

@@ -65,11 +65,6 @@ class Katachi extends WebglCanvas {
         this.webglDepthBuffer.PrepareDepthFrameBuffer(this.targetTextureWidth, this.targetTextureHeight);
         this.webglDepthBuffer.CacheDepthMaterial();
 
-        console.log(this._canvasDom.clientWidth);
-        console.log(this._canvasDom.clientHeight);
-
-        console.log(this._gl.canvas.width);
-
         window.requestAnimationFrame(this.PerformGameLoop.bind(this));
 
         return true;

@@ -20,5 +20,5 @@ export const Vector : VectorStaticType = {
 
 export const Calculation = Object.freeze({
     Radian2Degree : 180 / Math.PI,
-    Degree2Radian : 180 / 180 / Math.PI
+    Degree2Radian : Math.PI * 180
 });

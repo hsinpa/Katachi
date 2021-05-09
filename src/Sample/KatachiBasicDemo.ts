@@ -12,6 +12,7 @@ class KatachiBasicDemo {
     private katachi : Katachi;
     private mainQuad : ShapeObject;
     private mainCube : ShapeObject;
+    private mainCubeTwo : ShapeObject;
     private mainFloor : ShapeObject;
 
     private inputHandler : InputHandler
@@ -34,6 +35,7 @@ class KatachiBasicDemo {
             //this.katachi.scene.camera.projection.projectionType = ProjectionType.Perspective;
             this.mainQuad = katachi.shapeBuilder.BuildQuad();
             this.mainCube = katachi.shapeBuilder.BuildCube();
+            this.mainCubeTwo = katachi.shapeBuilder.BuildCube();
             this.mainFloor = katachi.shapeBuilder.BuildQuad();
 
             this.mainQuad.transform.Scale(0.2);
@@ -43,6 +45,11 @@ class KatachiBasicDemo {
             this.mainCube.transform.Scale(0.5);
             this.mainCube.transform.position[2] = -2;
 
+            this.mainCubeTwo.transform.Scale(0.2);
+            this.mainCubeTwo.transform.position[2] = -2;
+            this.mainCubeTwo.transform.position[1] = 0.75;
+            this.mainCubeTwo.transform.SetParent(this.mainCube.transform);
+
             this.mainFloor.transform.rotation[0] = Math.PI*1.5;
             this.mainFloor.transform.position[1] = -0.5;
             this.mainFloor.transform.Scale(5);
@@ -50,6 +57,8 @@ class KatachiBasicDemo {
             katachi.scene.InsertShapeObj(this.mainCube);
             katachi.scene.InsertShapeObj(this.mainQuad);
             katachi.scene.InsertShapeObj(this.mainFloor);
+            katachi.scene.InsertShapeObj(this.mainCubeTwo);
+
 
             this.katachi.materialManager.LoadTextureToObject(this.mainQuad, "u_mainTex", "./texture/BrickTex_256.jpg");
             this.katachi.materialManager.LoadTextureToObject(this.mainCube, "u_mainTex", "./texture/Personal_01.png");
@@ -90,8 +99,8 @@ class KatachiBasicDemo {
         if (this.katachi == null|| this.mainQuad == null) return;
 
         // console.log(this.katachi.scene.lights.directionLigth.transform.rotation[0]);
-        //this.mainCube.transform.rotation[1] += 0.01;
-
+        //this.mainCube.transform.Translate(Math.sin(timeSecond)*0.02, 0, 0);
+        this.mainCube.transform.Rotate(0.01);
         // let camX = Math.sin(timeSecond) * 2;
         // let camZ = Math.cos(timeSecond) * 2;
 

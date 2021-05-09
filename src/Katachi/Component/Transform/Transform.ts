@@ -65,9 +65,9 @@ class Transform {
         this.quaterion = quat.create();
 
         this.relativePosition = vec3.create();
-        this.rotation = vec3.create();
-        this.scale = vec3.create();
-        this.quaterion = quat.create();
+        this.relativeRotation = vec3.create();
+        this.relativeScale = vec3.create();
+        this.relativeQuaterion = quat.create();
 
         this._modelMatrix = mat4.create();
         this._inverseTransposeMatrix = mat4.create();
@@ -92,31 +92,45 @@ class Transform {
          vec3.add(this.translateVector, this.translateVector, this.translateVectorZ);
  
          vec3.add(this.position, this.position, this.translateVector);
+
+         this.UpdateChildTransform();
+     }
+
+     Rotate(distinctY:number) {
+         this.rotation[0] += distinctY;
+
+         this.UpdateChildTransform();
      }
 
      private GetModelMatrix(position : vec3, rotation : vec3, scale : vec3, quaterion : quat, targetMotrix : mat4) {
-        this.quaterion = quat.fromEuler(quaterion, rotation[0] * Calculation.Radian2Degree, rotation[1]* Calculation.Radian2Degree, rotation[2]* Calculation.Radian2Degree);
-        return mat4.fromRotationTranslationScale(targetMotrix,quaterion, position, scale);
+        quaterion = quat.fromEuler(quaterion, rotation[0] * Calculation.Radian2Degree, rotation[1]* Calculation.Radian2Degree, rotation[2]* Calculation.Radian2Degree);
+        return mat4.fromRotationTranslationScale(targetMotrix, quaterion, position, scale);
      }
 
     //#region  Hierachy Structure
      public UpdateChildTransform() {
-        
         for (let i = 0; i < this.childCount; i++) {
-
+            this._children[i].UpdateTransform(this);
         }
      }
 
      public UpdateTransform(parentTransform : Transform) {
         vec3.add(this.position, this.relativePosition, parentTransform.position);
         vec3.add(this.rotation, this.relativeRotation, parentTransform.rotation);
-        vec3.add(this.scale, this.relativeScale, parentTransform.scale);
+
+        vec3.rotateX(this.rotation, this.position, parentTransform.position, 0.01);
+
+
+        vec3.mul(this.scale, this.relativeScale, parentTransform.scale);
+
+        this.UpdateChildTransform();
      }
 
      public UpdateRelativeTransform(parentTransform : Transform) {
-        vec3.add(this.relativePosition,vec3.negate(this.relativePosition, this.position), parentTransform.position);
-        vec3.add(this.relativeRotation,vec3.negate(this.relativeRotation, this.rotation), parentTransform.rotation);
-        vec3.add(this.relativeScale,vec3.negate(this.relativeScale, this.scale), parentTransform.scale);
+        vec3.add(this.relativePosition, vec3.negate(this.relativePosition, parentTransform.position), this.position);
+        vec3.add(this.relativeRotation,parentTransform.rotation, vec3.negate(this.relativeRotation, this.rotation));
+        
+        vec3.copy(this.relativeScale, this.scale);
      }
 
      public SetParent(parentTransform : Transform) {
@@ -127,6 +141,9 @@ class Transform {
         }
 
         parentTransform.AppendChild(this);
+
+        this.UpdateRelativeTransform(parentTransform);
+        this.UpdateTransform(parentTransform);
      }
 
      public AppendChild(targetTransform : Transform) {
