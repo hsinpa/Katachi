@@ -33,13 +33,26 @@ class Transform {
     }
 
     public get calculateModelMatrix() {
-        return this.GetModelMatrix(this.position, this.rotation, this.scale, this.quaterion, this.modelMatrix);
+       if (this._parent == null) {
+            return this.GetModelMatrix(this.position, this.rotation, this.scale, this.quaterion, this.modelMatrix);
+       }
+        
+        //this.GetModelMatrix(this.position, this.rotation, this.scale, this.quaterion, this.modelMatrix);
+
+        this.GetModelMatrix(this.relativePosition, this.relativeRotation, this.relativeScale, this.relativeQuaterion, this._relativeModelMatrix);
+
+        return mat4.mul(this.modelMatrix, this._parent.modelMatrix, this._relativeModelMatrix);
     }
 
-    public get calcuateRelativeModelMatrix() {
-        return this.GetModelMatrix(this.relativePosition, this.relativeRotation, this.relativeScale, this.relativeQuaterion, this._relativeModelMatrix);
-    }
+    private lookUpPoint : vec3 = vec3.create();
+    private _MVMatrix = mat4.create();
+    public get MVMatrix() : mat4 {
+        let v = this.transformVector.UpdateTransformVector(this.rotation);
+        vec3.add(this.lookUpPoint, this.position, v.forward);
+        mat4.lookAt(this._MVMatrix, this.position, this.lookUpPoint, Vector.top);
 
+        return mat4.mul(this._MVMatrix, this._MVMatrix, this.calculateModelMatrix);
+    }
 
     public get InverseTransposeMatrix() {
         mat4.invert(this._inverseTransposeMatrix, this._modelMatrix);
@@ -68,6 +81,7 @@ class Transform {
         this.relativeRotation = vec3.create();
         this.relativeScale = vec3.create();
         this.relativeQuaterion = quat.create();
+        this._relativeModelMatrix = mat4.create();
 
         this._modelMatrix = mat4.create();
         this._inverseTransposeMatrix = mat4.create();
@@ -92,14 +106,10 @@ class Transform {
          vec3.add(this.translateVector, this.translateVector, this.translateVectorZ);
  
          vec3.add(this.position, this.position, this.translateVector);
-
-         this.UpdateChildTransform();
      }
 
      Rotate(distinctY:number) {
          this.rotation[0] += distinctY;
-
-         this.UpdateChildTransform();
      }
 
      private GetModelMatrix(position : vec3, rotation : vec3, scale : vec3, quaterion : quat, targetMotrix : mat4) {
@@ -108,29 +118,17 @@ class Transform {
      }
 
     //#region  Hierachy Structure
-     public UpdateChildTransform() {
-        for (let i = 0; i < this.childCount; i++) {
-            this._children[i].UpdateTransform(this);
-        }
-     }
 
-     public UpdateTransform(parentTransform : Transform) {
-        vec3.add(this.position, this.relativePosition, parentTransform.position);
-        vec3.add(this.rotation, this.relativeRotation, parentTransform.rotation);
-
-        vec3.rotateX(this.rotation, this.position, parentTransform.position, 0.01);
-
-
-        vec3.mul(this.scale, this.relativeScale, parentTransform.scale);
-
-        this.UpdateChildTransform();
-     }
 
      public UpdateRelativeTransform(parentTransform : Transform) {
         vec3.add(this.relativePosition, vec3.negate(this.relativePosition, parentTransform.position), this.position);
         vec3.add(this.relativeRotation,parentTransform.rotation, vec3.negate(this.relativeRotation, this.rotation));
-        
-        vec3.copy(this.relativeScale, this.scale);
+        vec3.divide(this.relativeScale, this.scale, parentTransform.scale);
+
+        console.log(this.scale);
+        console.log(parentTransform.scale);
+
+        console.log(this.relativeScale);
      }
 
      public SetParent(parentTransform : Transform) {
@@ -140,10 +138,10 @@ class Transform {
             this.parent.RemoveChildren(this);
         }
 
+        this._parent = parentTransform;
         parentTransform.AppendChild(this);
 
         this.UpdateRelativeTransform(parentTransform);
-        this.UpdateTransform(parentTransform);
      }
 
      public AppendChild(targetTransform : Transform) {

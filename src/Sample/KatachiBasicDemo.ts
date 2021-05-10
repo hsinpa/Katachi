@@ -46,8 +46,8 @@ class KatachiBasicDemo {
             this.mainCube.transform.position[2] = -2;
 
             this.mainCubeTwo.transform.Scale(0.2);
-            this.mainCubeTwo.transform.position[2] = -2;
-            this.mainCubeTwo.transform.position[1] = 0.75;
+            // this.mainCubeTwo.transform.position[2] = -2;
+            // this.mainCubeTwo.transform.position[1] = 1;
             this.mainCubeTwo.transform.SetParent(this.mainCube.transform);
 
             this.mainFloor.transform.rotation[0] = Math.PI*1.5;
@@ -100,7 +100,7 @@ class KatachiBasicDemo {
 
         // console.log(this.katachi.scene.lights.directionLigth.transform.rotation[0]);
         //this.mainCube.transform.Translate(Math.sin(timeSecond)*0.02, 0, 0);
-        this.mainCube.transform.Rotate(0.01);
+        //this.mainCube.transform.Rotate(0.01);
         // let camX = Math.sin(timeSecond) * 2;
         // let camZ = Math.cos(timeSecond) * 2;
 
