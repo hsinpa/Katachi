@@ -14,11 +14,15 @@ export default class TransformVector {
     }
 
     public UpdateTransformVector(rotation : Readonly<vec3>) {
-        this.cacheTVector.forward = this.GetForward(rotation);
-        this.cacheTVector.right = this.GetRight();
-        this.cacheTVector.top = this.GetUp();
+        return this.CalculateTransformVector(rotation, this.cacheTVector);
+    }
 
-        return this.cacheTVector;
+    public CalculateTransformVector(rotation : Readonly<vec3>, cacheTVector : VectorType) {
+        cacheTVector.forward = this.GetForward(rotation);
+        cacheTVector.right = this.GetRight();
+        cacheTVector.top = this.GetUp();
+
+        return cacheTVector;
     }
 
     public GetTransformVector() {
@@ -34,7 +38,7 @@ export default class TransformVector {
     }
 
     private GetRight() {
-        vec3.cross(this.cacheTVector.right, Vector.top, this.cacheTVector.forward);
+        vec3.cross(this.cacheTVector.right, Vector.up, this.cacheTVector.forward);
         return vec3.normalize(this.cacheTVector.right, this.cacheTVector.right);
     }
 

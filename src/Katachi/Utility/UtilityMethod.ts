@@ -1,5 +1,5 @@
 import {IntVector2} from './UniversalType';
-
+import {quat, vec3} from 'gl-matrix'
 export function Lerp(x : number, y : number, t : number) {
     return x + (t * (y - x));
 }
@@ -103,4 +103,27 @@ export function RandomChar(N : number) {
     var s = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
     return Array.apply(null, Array(N)).map(function() { return s.charAt(Math.floor(Math.random() * s.length)); }).join('');
+}
+
+export function ToEulerAngles(q : quat) {
+    let angles = vec3.create();
+
+    // roll (x-axis rotation)
+    let sinr_cosp = 2 * (q[3]* q[0] + q[1] * q[2]);
+    let cosr_cosp = 1 - 2 * (q[0] * q[0] + q[1] * q[1]);
+    angles[0] = Math.atan2(sinr_cosp, cosr_cosp);
+
+    // pitch (y-axis rotation)
+    let sinp = 2 * (q[3] * q[1] - q[2] * q[0]);
+    if (Math.abs(sinp) >= 1)
+        angles[1] = Math.sign(sinp); // use 90 degrees if out of range
+    else
+        angles[1] = Math.asin(sinp);
+
+    // yaw (z-axis rotation)
+    let siny_cosp = 2 * (q[3] * q[2] + q[0] * q[1]);
+    let cosy_cosp = 1 - 2 * (q[1] * q[1] + q[2] * q[2]);
+    angles[2] = Math.atan2(siny_cosp, cosy_cosp);
+
+    return angles;
 }

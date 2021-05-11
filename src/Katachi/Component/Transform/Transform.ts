@@ -1,24 +1,30 @@
-import {mat4, quat, vec3, vec4} from 'gl-matrix';
-import {Vector, Calculation} from './TransformStatic';
+import {mat3, mat4, quat, vec3, vec4} from 'gl-matrix';
+import {Vector, Calculation, VectorType} from './TransformStatic';
 import TransformVector from './TransformVector'
+import {ToEulerAngles} from '../../Utility/UtilityMethod';
 
 class Transform {
     public relativePosition : vec3;
     public relativeRotation : vec3;
     public relativeScale : vec3;
     private relativeQuaterion : quat;
-
+    
     public position : vec3;
-    public rotation : vec3;
+    private _rotation : vec3;
     public scale : vec3;
     private quaterion : quat;
 
     private _modelMatrix : mat4;
     private _relativeModelMatrix : mat4;
+    private _preSaveRelativeModelMatrix : mat4;
     private _inverseTransposeMatrix : mat4;
 
     private _parent: Transform;
     private _children : Transform[];
+
+    public get rotation() {
+        return (this._rotation);
+    }
 
     public get childCount() {
         return this.children.length;
@@ -34,24 +40,13 @@ class Transform {
 
     public get calculateModelMatrix() {
        if (this._parent == null) {
-            return this.GetModelMatrix(this.position, this.rotation, this.scale, this.quaterion, this.modelMatrix);
-       }
+            return this.GetModelMatrix(this.position, this._rotation, this.scale, this.quaterion, this._modelMatrix);
+        }
         
-        //this.GetModelMatrix(this.position, this.rotation, this.scale, this.quaterion, this.modelMatrix);
-
         this.GetModelMatrix(this.relativePosition, this.relativeRotation, this.relativeScale, this.relativeQuaterion, this._relativeModelMatrix);
+        mat4.mul(this._modelMatrix, this._parent.modelMatrix, this._relativeModelMatrix);
 
-        return mat4.mul(this.modelMatrix, this._parent.modelMatrix, this._relativeModelMatrix);
-    }
-
-    private lookUpPoint : vec3 = vec3.create();
-    private _MVMatrix = mat4.create();
-    public get MVMatrix() : mat4 {
-        let v = this.transformVector.UpdateTransformVector(this.rotation);
-        vec3.add(this.lookUpPoint, this.position, v.forward);
-        mat4.lookAt(this._MVMatrix, this.position, this.lookUpPoint, Vector.top);
-
-        return mat4.mul(this._MVMatrix, this._MVMatrix, this.calculateModelMatrix);
+        return this._modelMatrix;
     }
 
     public get InverseTransposeMatrix() {
@@ -73,7 +68,7 @@ class Transform {
 
     constructor(position : vec3, rotation : vec3, scale : vec3) {
         this.position = position;
-        this.rotation = rotation;
+        this._rotation = rotation;
         this.scale = scale;
         this.quaterion = quat.create();
 
@@ -82,6 +77,7 @@ class Transform {
         this.relativeScale = vec3.create();
         this.relativeQuaterion = quat.create();
         this._relativeModelMatrix = mat4.create();
+        this._preSaveRelativeModelMatrix = mat4.create();
 
         this._modelMatrix = mat4.create();
         this._inverseTransposeMatrix = mat4.create();
@@ -108,8 +104,16 @@ class Transform {
          vec3.add(this.position, this.position, this.translateVector);
      }
 
-     Rotate(distinctY:number) {
-         this.rotation[0] += distinctY;
+     Rotate(roll : number, pitch : number, yaw:number) {
+         quat.rotateX(this.quaterion, this.quaterion, roll);
+         quat.rotateY(this.quaterion, this.quaterion, pitch);
+         quat.rotateZ(this.quaterion, this.quaterion, yaw);
+     }
+
+     SetEuler(x : number, y : number, z : number) {
+        this._rotation[0] = x;
+        this._rotation[1] = y;
+        this._rotation[2] = z;
      }
 
      private GetModelMatrix(position : vec3, rotation : vec3, scale : vec3, quaterion : quat, targetMotrix : mat4) {
@@ -118,17 +122,18 @@ class Transform {
      }
 
     //#region  Hierachy Structure
+     public UpdateRelativeTransformByParent(parentTransform : Transform) {
+        let worldModelMatrix = this.GetModelMatrix(this.position, this._rotation, this.scale, this.quaterion, this.modelMatrix);
+        let inverseParentMatrix = mat4.create();
 
+        mat4.invert(inverseParentMatrix, parentTransform.calculateModelMatrix);
 
-     public UpdateRelativeTransform(parentTransform : Transform) {
-        vec3.add(this.relativePosition, vec3.negate(this.relativePosition, parentTransform.position), this.position);
-        vec3.add(this.relativeRotation,parentTransform.rotation, vec3.negate(this.relativeRotation, this.rotation));
-        vec3.divide(this.relativeScale, this.scale, parentTransform.scale);
+        mat4.mul(this._preSaveRelativeModelMatrix, inverseParentMatrix, worldModelMatrix);
 
-        console.log(this.scale);
-        console.log(parentTransform.scale);
-
-        console.log(this.relativeScale);
+        this.relativePosition = mat4.getTranslation(this.relativePosition,this._preSaveRelativeModelMatrix);
+        this.relativeQuaterion = mat4.getRotation(this.relativeQuaterion,this._preSaveRelativeModelMatrix);
+        this.relativeRotation = ToEulerAngles(this.relativeQuaterion)
+        this.relativeScale = mat4.getScaling(this.relativeScale,this._preSaveRelativeModelMatrix);
      }
 
      public SetParent(parentTransform : Transform) {
@@ -141,7 +146,7 @@ class Transform {
         this._parent = parentTransform;
         parentTransform.AppendChild(this);
 
-        this.UpdateRelativeTransform(parentTransform);
+        this.UpdateRelativeTransformByParent(parentTransform);
      }
 
      public AppendChild(targetTransform : Transform) {

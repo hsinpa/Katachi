@@ -18,9 +18,7 @@ export default class DirectionLight extends ObjectInterface {
         this.offsetPostion = vec3.fromValues(3, 9, 3);
 
         //Set default light direction in radian
-        this.transform.rotation[0] = Math.PI * 0.3;
-        this.transform.rotation[1] = Math.PI * 1.35;
-        this.transform.rotation[2] = 0;
+        this.transform.SetEuler(Math.PI * 0.3, Math.PI * 1.35, 0);
 
         this.transform.transformVector.UpdateTransformVector(this.transform.rotation);
 

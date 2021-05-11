@@ -100,7 +100,11 @@ class KatachiBasicDemo {
 
         // console.log(this.katachi.scene.lights.directionLigth.transform.rotation[0]);
         //this.mainCube.transform.Translate(Math.sin(timeSecond)*0.02, 0, 0);
-        //this.mainCube.transform.Rotate(0.01);
+        //this.mainCube.transform.Rotate(0.01, 0, 0);
+        //this.mainCube.transform.rotation[1] += 0.01;
+
+        let rotate = this.mainCube.transform.Rotation;
+
         // let camX = Math.sin(timeSecond) * 2;
         // let camZ = Math.cos(timeSecond) * 2;
 
