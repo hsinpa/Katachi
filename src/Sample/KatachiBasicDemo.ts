@@ -50,8 +50,11 @@ class KatachiBasicDemo {
             // this.mainCubeTwo.transform.position[1] = 1;
             this.mainCubeTwo.transform.SetParent(this.mainCube.transform);
 
-            this.mainFloor.transform.rotation[0] = Math.PI*1.5;
+            this.mainFloor.transform.Rotate( Math.PI*1.5, 0,0 );
+
+            //this.mainFloor.transform.rotation[0] = Math.PI*1.5;
             this.mainFloor.transform.position[1] = -0.5;
+
             this.mainFloor.transform.Scale(5);
 
             katachi.scene.InsertShapeObj(this.mainCube);
@@ -103,7 +106,7 @@ class KatachiBasicDemo {
         //this.mainCube.transform.Rotate(0.01, 0, 0);
         //this.mainCube.transform.rotation[1] += 0.01;
 
-        let rotate = this.mainCube.transform.Rotation;
+        this.mainCube.transform.Rotate(0, 0.01, 0);
 
         // let camX = Math.sin(timeSecond) * 2;
         // let camZ = Math.cos(timeSecond) * 2;

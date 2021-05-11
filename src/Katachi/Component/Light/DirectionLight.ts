@@ -24,6 +24,6 @@ export default class DirectionLight extends ObjectInterface {
 
         this.projection = new Projection(this.transform, ProjectionType.Orthographic);
 
-        this.projection.sizeOrtho = 5;
+        this.projection.sizeOrtho = 6;
     }
 }
