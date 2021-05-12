@@ -48,7 +48,7 @@ class ShapeObject extends ObjectInterface {
      * @memberof ShapeObject
      */
     GetMVPMatrix(viewMatrixFromCamera : mat4, projectionMatrix : mat4) {
-        let MV = mat4.mul(this.modelViewProjectionMatrix, viewMatrixFromCamera, this.transform.calculateModelMatrix);
+        let MV = mat4.mul(this.modelViewProjectionMatrix, viewMatrixFromCamera, this.transform.modelMatrix);
 
         return mat4.mul(this.modelViewProjectionMatrix, projectionMatrix, MV);
     }

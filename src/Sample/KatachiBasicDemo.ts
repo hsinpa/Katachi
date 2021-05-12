@@ -21,6 +21,7 @@ class KatachiBasicDemo {
     constructor() {
         this.inputHandler = new InputHandler();
         this.inputHandler.RegisterMovementEvent(this.OnMovementEvent.bind(this));
+        this.inputHandler.RegisterButtonEvent(this.OnMouseClickEvent.bind(this));
     }
 
     async SetUp(katachi : Katachi) {
@@ -48,7 +49,8 @@ class KatachiBasicDemo {
             this.mainCubeTwo.transform.Scale(0.2);
             // this.mainCubeTwo.transform.position[2] = -2;
             // this.mainCubeTwo.transform.position[1] = 1;
-            this.mainCubeTwo.transform.SetParent(this.mainCube.transform);
+
+            katachi.scene.SetParent(this.mainCube, this.mainCubeTwo);
 
             this.mainFloor.transform.Rotate( Math.PI*1.5, 0,0 );
 
@@ -57,10 +59,10 @@ class KatachiBasicDemo {
 
             this.mainFloor.transform.Scale(5);
 
-            katachi.scene.InsertShapeObj(this.mainCube);
-            katachi.scene.InsertShapeObj(this.mainQuad);
-            katachi.scene.InsertShapeObj(this.mainFloor);
-            katachi.scene.InsertShapeObj(this.mainCubeTwo);
+            katachi.scene.AddShapeObj(this.mainCube);
+            katachi.scene.AddShapeObj(this.mainQuad);
+            katachi.scene.AddShapeObj(this.mainFloor);
+            katachi.scene.AddShapeObj(this.mainCubeTwo);
 
 
             this.katachi.materialManager.LoadTextureToObject(this.mainQuad, "u_mainTex", "./texture/BrickTex_256.jpg");
@@ -93,6 +95,13 @@ class KatachiBasicDemo {
               //console.log(this.katachi.scene.camera.transform.rotation[0]);
 
         //this.mainQuad.transform.rotation[1] += -moveDelta[1] * 0.02;
+    }
+
+    OnMouseClickEvent() {
+        let parent = (this.mainCubeTwo.transform.parent == null) ? this.mainCube.transform : null;
+        console.log(parent);
+
+        this.mainCubeTwo.transform.SetParent(parent);
     }
 
     UpdateLoop(timeSecond : number) {

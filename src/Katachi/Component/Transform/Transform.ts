@@ -38,17 +38,6 @@ class Transform {
         return this._parent;
     }
 
-    public get calculateModelMatrix() {
-       if (this._parent == null) {
-            return this.GetModelMatrix(this.position, this.scale, this.quaterion, this._modelMatrix);
-        }
-        
-        this.GetModelMatrix(this.relativePosition, this.relativeScale, this.relativeQuaterion, this._relativeModelMatrix);
-        mat4.mul(this._modelMatrix, this._parent.modelMatrix, this._relativeModelMatrix);
-
-        return this._modelMatrix;
-    }
-
     public get InverseTransposeMatrix() {
         mat4.invert(this._inverseTransposeMatrix, this._modelMatrix);
         mat4.transpose(this._inverseTransposeMatrix, this._inverseTransposeMatrix);
@@ -86,6 +75,21 @@ class Transform {
 
         this._parent = null;
         this._children = [];
+    }
+
+    //Should update per frame
+    public UpdateModelMatrix() : mat4 {
+        if (this._parent == null) {
+            return this.GetModelMatrix(this.position, this.scale, this.quaterion, this._modelMatrix);
+        }
+        
+        this.GetModelMatrix(this.relativePosition, this.relativeScale, this.relativeQuaterion, this._relativeModelMatrix);
+        mat4.mul(this._modelMatrix, this._parent.modelMatrix, this._relativeModelMatrix);
+
+        //Update world position data
+        this.SetTransformByMatrix(this.position, this.quaterion, this.rotation, this.scale, this._modelMatrix);
+ 
+        return this._modelMatrix;
     }
 
     private GetModelMatrix(position : vec3, scale : vec3, quaterion : quat, targetMotrix : mat4) {
@@ -157,6 +161,7 @@ class Transform {
 //#endregion
 
 //#region  Hierachy Structure
+    //Should only execute during SetParent Func
     public UpdateRelativeTransformByParent(parentTransform : Transform) {
         if (parentTransform == null) {
             this.SetTransformByMatrix(this.position, this.quaterion, this.rotation, this.scale, this._modelMatrix);
@@ -165,29 +170,29 @@ class Transform {
 
         let worldModelMatrix = this.GetModelMatrix(this.position, this.scale, this.quaterion, this.modelMatrix);
         let inverseParentMatrix = mat4.create();
-
-        mat4.invert(inverseParentMatrix, parentTransform.calculateModelMatrix);
+        mat4.invert(inverseParentMatrix, parentTransform.UpdateModelMatrix());
 
         mat4.mul(this._preSaveRelativeModelMatrix, inverseParentMatrix, worldModelMatrix);
 
         this.SetTransformByMatrix(this.relativePosition, this.relativeQuaterion, this.relativeRotation, this.relativeScale, this._preSaveRelativeModelMatrix);
     }
 
-    private SetTransformByMatrix(position : vec3, quaterion : quat, rotaion:vec3, scale :vec3, matrix : mat4 ) {
+    private SetTransformByMatrix(position : vec3, quaterion : quat, rotation:vec3, scale :vec3, matrix : mat4 ) {
         position = mat4.getTranslation(position, matrix);
         quaterion = mat4.getRotation(quaterion, matrix);
-        rotaion = ToEulerAngles(quaterion)
+        rotation = ToEulerAngles(quaterion)
         scale = mat4.getScaling(scale, matrix);
     }
 
     public SetParent(parentTransform : Transform) {
+        this._parent = parentTransform;
+
         if (parentTransform == null) return;
 
         if (this.parent != null) {
             this.parent.RemoveChildren(this);
         }
 
-        this._parent = parentTransform;
         parentTransform.AppendChild(this);
 
         this.UpdateRelativeTransformByParent(parentTransform);

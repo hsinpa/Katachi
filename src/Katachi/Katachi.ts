@@ -113,6 +113,7 @@ class Katachi extends WebglCanvas {
         let material = (defaultMaterial == null) ? shapeObject.material : defaultMaterial
         this._gl.useProgram(material.glProgram);
 
+        shapeObject.transform.UpdateModelMatrix();
         const mvpMatrix = shapeObject.GetMVPMatrix(viewMatrix, projectionMatrix);
 
         shapeObject.ProcessMaterialAttr(this._gl, material);

@@ -1,5 +1,5 @@
 import { vec2, vec3 } from "gl-matrix";
-import { KeycodeTable } from "./KeycodeTable";
+import { KeycodeLookupTable, InputEventTitle } from "./KeycodeTable";
 
 
 
@@ -18,6 +18,10 @@ export interface InputMovementCallback {
 export interface InputMouseCallback {
     (mouse_delta: number[]): void;
 }
+
+export interface InputMouseClickCallback {
+    (): void;
+}
   
 class InputHandler {
 
@@ -32,6 +36,12 @@ class InputHandler {
 
     public GetButtonState(actionName : string) : boolean {
         return false;
+    }
+
+    public RegisterButtonEvent(callback : InputMouseClickCallback) {
+        window.addEventListener('click', e => {
+            callback();
+        });  
     }
 
     public RegisterMouseMovement(canvasDom : HTMLBodyElement, callback : InputMouseCallback) {
@@ -52,20 +62,14 @@ class InputHandler {
         this._keyboardCallback = callback;
 
         window.addEventListener("keydown", e => {
-            this.SetKeyboardState(e.key, true);
+            if (e.key in KeycodeLookupTable) {
+                this.SetKeyboardState(KeycodeLookupTable[e.key], true);
+            }
         } );
 
         window.addEventListener("keyup", e => {
-            this.SetKeyboardState(e.key, false);
-
-            // if (e.key == KeycodeTable.a || e.key == KeycodeTable.arrowLeft)
-            //     callback(InputMovementType.Left);
-            // else if (e.key == KeycodeTable.s || e.key == KeycodeTable.arrowDown)
-            //     callback(InputMovementType.Down);
-            // else if (e.key == KeycodeTable.d || e.key == KeycodeTable.arrowRight)
-            //     callback(InputMovementType.Right);
-            // else if (e.key == KeycodeTable.w || e.key == KeycodeTable.arrowUp)
-            //     callback(InputMovementType.Up);
+            if ( e.key in KeycodeLookupTable)
+                this.SetKeyboardState(KeycodeLookupTable[e.key], false);
         } );
     }
 
@@ -74,19 +78,19 @@ class InputHandler {
         this._cacheKeyboardDirection[0] = 0;
         this._cacheKeyboardDirection[1] = 0;
         
-        if (this._buttonState.hasOwnProperty(KeycodeTable.a) || this._buttonState.hasOwnProperty(KeycodeTable.arrowLeft)) {
+        if (this._buttonState.hasOwnProperty(InputEventTitle.left)) {
             vec2.add(this._cacheKeyboardDirection, this._cacheKeyboardDirection,InputMovementType.Left);
         }
 
-        if (this._buttonState.hasOwnProperty(KeycodeTable.s) || this._buttonState.hasOwnProperty(KeycodeTable.arrowDown)) {
+        if (this._buttonState.hasOwnProperty(InputEventTitle.down)) {
             vec2.add(this._cacheKeyboardDirection, this._cacheKeyboardDirection,InputMovementType.Down);
         }
 
-        if (this._buttonState.hasOwnProperty(KeycodeTable.d) || this._buttonState.hasOwnProperty(KeycodeTable.arrowRight)) {
+        if (this._buttonState.hasOwnProperty(InputEventTitle.right)) {
             vec2.add(this._cacheKeyboardDirection, this._cacheKeyboardDirection,InputMovementType.Right);
         }
 
-        if (this._buttonState.hasOwnProperty(KeycodeTable.w) || this._buttonState.hasOwnProperty(KeycodeTable.arrowUp)) {
+        if (this._buttonState.hasOwnProperty(InputEventTitle.up)) {
             vec2.add(this._cacheKeyboardDirection, this._cacheKeyboardDirection,InputMovementType.Up);
         }
 

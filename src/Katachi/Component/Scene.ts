@@ -5,13 +5,10 @@ import Light from './Light/Light';
 
 import ShapeObject from './Shape/ShapeObject';
 
-interface ShapeArrayType {
-    [id: string] : ShapeObject
-}
 
 class Scene {
 
-    private _shapeArray : ShapeArrayType;
+    private _shapeArray : ShapeObject[];
 
     public camera : Camera;
     public lights : Light;
@@ -21,18 +18,36 @@ class Scene {
     }
 
     constructor() {
-        this._shapeArray = {};
+        this._shapeArray = [];
 
         this.camera = new Camera();
         this.lights = new Light();
     }
 
-    public InsertShapeObj(shapeObject : ShapeObject) {
-        this._shapeArray[shapeObject.id] = shapeObject;
+    public AddShapeObj(shapeObject : ShapeObject) {
+        this._shapeArray.push(shapeObject);
     }
 
     public RemoveShapeObj(id : string) {
-        delete this._shapeArray[id];
+        let index = this._shapeArray.findIndex(x=>x.id = id);
+
+        if (index >= 0)
+            this._shapeArray.splice(index, 1);
+    }
+
+    public SetParent(parentObject : ShapeObject, childObject : ShapeObject) {
+        childObject.transform.SetParent(parentObject.transform);
+
+        if (parentObject == null) return;
+
+        let parentIndex = this._shapeArray.findIndex(x=>x.id = parentObject.id);
+    
+        if (parentIndex >= 0) {
+            this.RemoveShapeObj(childObject.id);
+
+            //Insert child behind parent
+            this._shapeArray.splice(parentIndex + 1, 0, childObject);
+        }
     }
 }
 
