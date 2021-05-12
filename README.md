@@ -168,3 +168,6 @@ Yes, they look pretty straight forward
 - 3D object loader (Which format not decide yet, maybe gltf)
 - Booming effect
 - Stencil shader
+
+## Third party tool
+- gl-matrix (prettry good one, it function as Float32Array by default)
