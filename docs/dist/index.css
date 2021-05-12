@@ -1,0 +1,1 @@
+html,body{height:100%;width:100%;background-color:#ebf0f3;margin:0px;padding:0px}#webgl_contorlpanel{position:absolute;top:0px;display:none}#webgl_contorlpanel .panels{display:flex;width:500px}#webgl_contorlpanel .color_panel{flex:1}#webgl_contorlpanel .gradient_panel{flex:1;display:none}#webgl_canvas{width:100%;height:100%}

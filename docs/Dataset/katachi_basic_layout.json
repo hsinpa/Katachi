@@ -1,0 +1,21 @@
+{
+    "canvas_dom_query" : "#webgl_canvas",
+    "shaders" : [
+        {
+            "id" : "glprogram@standard_material",
+            "vertex" : "./glsl/basic/standard_mat.vert",
+            "fragment" : "./glsl/basic/standard_mat.frag"
+        },
+        {
+            "id" : "glprogram@unlit_material",
+            "vertex" : "./glsl/basic/unlit_mat.vert",
+            "fragment" : "./glsl/basic/unlit_mat.frag"
+        },
+        {
+            "id" : "glprogram@depth_material",
+            "vertex" : "./glsl/basic/depth_mat.vert",
+            "fragment" : "./glsl/basic/depth_mat.frag"
+        }
+    ]
+}
+
