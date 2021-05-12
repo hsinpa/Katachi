@@ -7,6 +7,9 @@ Super simple webgl 3D engine, but it work.
 - Hierarchy modeling
 - Work well with css and responsive to window resize
 
+# Demo (Only primitive shape)
+https://hsinpa.github.io/Katachi/
+
 # Documentation
 ## Initialization
 
@@ -166,6 +169,7 @@ Yes, they look pretty straight forward
 ## Roadmap, Order by priority
 - Experient on how to create custom shader with ease
 - 3D object loader (Which format not decide yet, maybe gltf)
+- Make better demo scene
 - Booming effect
 - Stencil shader
 
