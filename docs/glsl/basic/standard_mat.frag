@@ -58,7 +58,6 @@
     return mix(colorTex, projectedTexColor, projectedAmount);
   }
 
-
   float ShadowCalculation() {
     vec3 projCoords = v_lightSpacePos.xyz / v_lightSpacePos.w;
     projCoords = projCoords * 0.5 + 0.5; // change to UV coordinate
@@ -96,5 +95,5 @@
     color.b = min(1.0, color.b);
     color.a = 1.0;
 
-    gl_FragColor = color; //vec4(v_uv.x, v_uv.y, 0.0, 1.0);
+    gl_FragColor = color;//vec4(v_uv.x, v_uv.y, 0.0, 1.0);
   }
