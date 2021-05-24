@@ -18,7 +18,7 @@ export default class DemoSceneLoader {
             self.SetGLTFToConfigLayout(katachi, sceneJsonConfig.gltf[i], (gltfModel));
         }
 
-        // Promise.all(gltfPromiseArray).then(function(values) {
+        // await Promise.all(gltfPromiseArray).then(function(values) {
         //     let gltfCount = sceneJsonConfig.gltf.length;
 
         //     for (let i = 0; i < gltfCount; i++) {

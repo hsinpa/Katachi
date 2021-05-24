@@ -89,8 +89,8 @@ class ShapeBuilder {
         defaultMatConfig.attributes[DefaultVertexShaderParameter.tangent].value = gltfmesh.tangents.buffer;
 
         if (gltfModel.materials.length > 0) {
-            defaultMatConfig.texture[0].textureBuffer = gltfModel.materials[0].baseColorTexture; // DiffuseTex
-            defaultMatConfig.texture[1].textureBuffer = gltfModel.materials[0].normalTexture; // NormalTex
+            if (gltfModel.materials[0].baseColorTexture != null)defaultMatConfig.texture[0].textureBuffer = gltfModel.materials[0].baseColorTexture; // DiffuseTex
+            if (gltfModel.materials[0].normalTexture != null) defaultMatConfig.texture[1].textureBuffer = gltfModel.materials[0].normalTexture; // NormalTex
         }
         shapeObject.SetCustomUniformAttr("u_mainColor", {value : [1, 1, 1, 1], isMatrix : false, function : this._gl.uniform4fv})
 

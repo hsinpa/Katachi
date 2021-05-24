@@ -40,8 +40,8 @@ class Scene {
 
         if (parentObject == null) return;
 
-        let parentIndex = this._shapeArray.findIndex(x=>x.id = parentObject.id);
-    
+        let parentIndex = this._shapeArray.findIndex(x=>x.id == parentObject.id);
+            
         if (parentIndex >= 0) {
             this.RemoveShapeObj(childObject.id);
 

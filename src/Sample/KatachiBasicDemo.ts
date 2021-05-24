@@ -13,12 +13,11 @@ class KatachiBasicDemo {
     private katachi : Katachi;
     private sceneLoader : DemoSceneLoader;
 
-    private mainQuad : ShapeObject;
     private mainCube : ShapeObject;
     private mainCubeTwo : ShapeObject;
 
     private inputHandler : InputHandler
-    private katachiIsReady: boolean;
+    private sceneIsReady: boolean = false;
 
     constructor() {
         this.inputHandler = new InputHandler();
@@ -29,44 +28,39 @@ class KatachiBasicDemo {
 
     async SetUp(katachi : Katachi, sceneLayoutType : SceneLayoutType) {
         this.katachi = katachi;
-        this.katachiIsReady = await katachi.SetUp(this.UpdateLoop.bind(this));
+        let katachiReady = await katachi.SetUp(this.UpdateLoop.bind(this));
 
         let canvasDom : HTMLBodyElement = document.querySelector("#webgl_canvas");
 
-        if (this.katachiIsReady) {
+        if (katachiReady) {
             this.inputHandler.RegisterMouseMovement(canvasDom, this.OnMouseEvent.bind(this));
 
-            this.sceneLoader.LoadGLTFContent(katachi, sceneLayoutType);
+            await this.sceneLoader.LoadGLTFContent(katachi, sceneLayoutType);
 
-            this.mainQuad = katachi.shapeBuilder.BuildQuad();
             this.mainCube = katachi.shapeBuilder.BuildCube();
             this.mainCubeTwo = katachi.shapeBuilder.BuildCube();
 
-            this.mainQuad.transform.SetPosition(-1.2, 0, -1);
-            this.mainQuad.transform.Scale(0.2);
+            this.mainCube.transform.SetPosition(0, -0.2,-2);
+            this.mainCube.transform.Scale(0.3);
 
-            this.mainCube.transform.SetPosition(0, 0,-2);
-            this.mainCube.transform.Scale(0.5);
-
-            this.mainCubeTwo.transform.Scale(0.2);
+            this.mainCubeTwo.transform.Scale(0.1);
+            this.mainCubeTwo.transform.SetPosition(0, -0.3,-1);
 
             katachi.scene.SetParent(this.mainCube, this.mainCubeTwo);
 
-
             katachi.scene.AddShapeObj(this.mainCube);
-            katachi.scene.AddShapeObj(this.mainQuad);
             katachi.scene.AddShapeObj(this.mainCubeTwo);
 
-            this.katachi.materialManager.LoadTextureToObject(this.mainQuad, "u_mainTex", "./texture/BrickTex_256.jpg");
             this.katachi.materialManager.LoadTextureToObject(this.mainCube, "u_mainTex", "./texture/Personal_01.png");
             
             this.mainCube.SetCustomUniformAttr("u_mainColor", {value : [1, 1, 1, 1], isMatrix : false, function : this.katachi.webglContext.uniform4fv})
-            this.mainQuad.SetCustomUniformAttr("u_mainColor", {value : [0, 0, 1, 1], isMatrix : false, function : this.katachi.webglContext.uniform4fv})
+
+            this.sceneIsReady = true;
         }
     }
 
     OnMovementEvent(direction : vec2) {
-        if (!this.katachiIsReady) return; 
+        if (!this.sceneIsReady) return; 
         let deltaTime = 0.02 ;
         let speed = deltaTime;
         this.katachi.scene.camera.transform.Translate(-direction[0] * speed, 0, direction[1] * speed);
@@ -102,7 +96,7 @@ class KatachiBasicDemo {
 
         this.inputHandler.OnUpdate();
 
-        if (this.katachi == null|| this.mainQuad == null) return;
+        if (!this.sceneIsReady) return;
 
         // console.log(this.katachi.scene.lights.directionLigth.transform.rotation[0]);
         //this.mainCube.transform.Translate(Math.sin(timeSecond)*0.02, 0, 0);
