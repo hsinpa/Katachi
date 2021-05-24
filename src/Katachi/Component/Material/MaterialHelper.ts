@@ -8,7 +8,7 @@ export function GetDefaultMaterialConfig(gl : WebGLRenderingContext) {
             a_vertex : {
                 value : [],
                 drawType : WebGLRenderingContext.STATIC_DRAW,
-                vertexPointer : {size : 4, type : gl.FLOAT, normalize: false},
+                vertexPointer : {size : 3, type : gl.FLOAT, normalize: false},
             },
             a_uv : {
                 value : [],
@@ -24,6 +24,11 @@ export function GetDefaultMaterialConfig(gl : WebGLRenderingContext) {
                 value : [],
                 drawType : WebGLRenderingContext.STATIC_DRAW,
                 vertexPointer : {size : 3, type : gl.FLOAT, normalize: true},
+            },
+            a_tangent : {
+                value : [],
+                drawType : WebGLRenderingContext.STATIC_DRAW,
+                vertexPointer : {size : 4, type : gl.FLOAT, normalize: true},
             }
         },
         uniforms : [DefaultVertexShaderParameter.time, DefaultVertexShaderParameter.mainColor, DefaultVertexShaderParameter.mainTex,  
@@ -32,25 +37,11 @@ export function GetDefaultMaterialConfig(gl : WebGLRenderingContext) {
                     DefaultVertexShaderParameter.lightSpaceMVPMatrix, DefaultVertexShaderParameter.depthMapTex_Texel, DefaultVertexShaderParameter.mainTex_Texel
                 ],
 
-        texture : [{id : DefaultVertexShaderParameter.mainTex}, {id : DefaultVertexShaderParameter.depthMapTexture, texture : DefaultVertexShaderParameter.depthMapTexture}],
+        texture : [{id : DefaultVertexShaderParameter.mainTex}, {id : DefaultVertexShaderParameter.normalTex},
+                    {id : DefaultVertexShaderParameter.depthMapTexture, texture : DefaultVertexShaderParameter.depthMapTexture}],
             
         count : 0
     }
 
     return config;
-}
-
-export function GetGLTexture(gl : WebGLRenderingContext, textureSequence : number) : number {
-    switch(textureSequence) {
-        case 1 :
-            return gl.TEXTURE0
-        case 2 :
-            return gl.TEXTURE1
-        case 3 :
-            return gl.TEXTURE2
-        case 4 :
-            return gl.TEXTURE3
-
-        return gl.TEXTURE4;
-    }
 }

@@ -1,5 +1,4 @@
 import {GLUniformFunction, ShaderAttributConfigType, GLAttrShaderPosition, GLUniformShaderPosition, ShaderConfigType, UniformTextureDefine} from './MaterialTypes';
-import {GetGLTexture} from './MaterialHelper';
 import WebglResource from '../../WebGL/WebglResource';
 
 class Material {
@@ -32,14 +31,22 @@ class Material {
         Object.keys(properties).forEach(key => {
             var attributes = gl.getAttribLocation(this.glProgram, key);
 
-            let buffer : WebGLBuffer = gl.createBuffer();
-            if (properties[key].value != null && properties[key].value.length > 0) {            
-                gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-    
-                gl.bufferData(gl.ARRAY_BUFFER, new Float32Array((properties[key].value as number[]) ), gl.STATIC_DRAW);    
+            if (Array.isArray(properties[key].value)) {
+                let buffer : WebGLBuffer = gl.createBuffer();
+                let rawDataArray =  properties[key].value as number[];
+
+                if (rawDataArray != null && rawDataArray.length > 0) {            
+                    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+        
+                    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(rawDataArray ), gl.STATIC_DRAW);    
+                }
+
+                this.cacheAttrShaderPosition[key] = {position_id : attributes, buffer : buffer, vertexPointer : properties[key].vertexPointer};
+
+            } else {
+                this.cacheAttrShaderPosition[key] = {position_id : attributes, buffer : properties[key].value, vertexPointer : properties[key].vertexPointer};
             }
-            
-            this.cacheAttrShaderPosition[key] = {position_id : attributes, buffer : buffer, vertexPointer : properties[key].vertexPointer};
+
         });
     }
 
@@ -61,6 +68,7 @@ class Material {
         let pCount = properties.length;
 
         for (let i = 0; i < pCount; i++) {
+            let uniTextureDefine = properties[i];
             let uniform = (gl.getUniformLocation(this.glProgram, properties[i].id));
 
             //Might be null, if frag shader didn't use this property at all
@@ -74,15 +82,16 @@ class Material {
                 this.glResource.SaveGLTextureSource(key, textureKey, uniform);
 
                 if (!this.glResource.glGlobalTextureCache.containsKey(textureKey)) {
-                    let texture = gl.createTexture();
+                    let texture = (uniTextureDefine.textureBuffer == null) ? gl.createTexture() : uniTextureDefine.textureBuffer;
 
                     let cache = this.glResource.SaveGlobalTextureSource(textureKey, texture, gl.TEXTURE0);
 
                     gl.activeTexture(cache.globalIndex);
                     gl.bindTexture(gl.TEXTURE_2D, texture);
-        
-                    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE,
-                                  new Uint8Array([255, 255, 255, 255])); 
+                    
+                    if (uniTextureDefine.textureBuffer == null)
+                        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE,
+                                    new Uint8Array([255, 255, 255, 255])); 
 
                     gl.uniform1i(uniform, cache.globalIndex - gl.TEXTURE0); 
                 }
@@ -90,7 +99,7 @@ class Material {
         }
     }
 
-    ExecuteAttributeProp(gl : WebGLRenderingContext, attribute_name : string, dynamicArray? : Float32Array) {
+    ExecuteAttributeProp(gl : WebGLRenderingContext, attribute_name : string, dynamicArray? : Float32Array, dynamicBuffer? : WebGLBuffer) {
         if (!(attribute_name in this.cacheAttrShaderPosition)) return;
 
         let cacheAttr = this.cacheAttrShaderPosition[attribute_name];
@@ -100,9 +109,9 @@ class Material {
         gl.enableVertexAttribArray(cacheAttr.position_id);   
 
         // Bind the position buffer.
-        gl.bindBuffer(gl.ARRAY_BUFFER, cacheAttr.buffer);
+        gl.bindBuffer(gl.ARRAY_BUFFER, (dynamicBuffer == null) ? cacheAttr.buffer : dynamicBuffer);
 
-        if (dynamicArray != null) {
+        if (dynamicArray != null && dynamicBuffer == null) {
             gl.bufferData(gl.ARRAY_BUFFER, dynamicArray, gl.DYNAMIC_DRAW);
         }
 
@@ -141,8 +150,6 @@ class Material {
         if (glTextureDataSet == null) return;
 
         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
-
-        console.log(uniform_name+", "+ sprite.src +", "+glTextureDataSet.globalType.globalIndex +", " + glTextureDataSet.localType.localIndex );
 
         gl.activeTexture(glTextureDataSet.globalType.globalIndex);      
         gl.bindTexture(gl.TEXTURE_2D, glTextureDataSet.globalType.texture);

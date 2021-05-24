@@ -97,8 +97,6 @@ class MaterialManager {
           return shader;
         }
 
-        console.log(gl.getShaderInfoLog(shader));
-
         gl.deleteShader(shader);
 
         return null;
@@ -116,8 +114,6 @@ class MaterialManager {
         if (success) {
           return program;
         }
-
-        console.log(gl.getProgramInfoLog(program));
 
         gl.deleteProgram(program);
 

@@ -4,11 +4,13 @@
   uniform vec4 u_mainColor;
   uniform sampler2D u_mainTex;
   uniform sampler2D u_depthTex;
+  uniform sampler2D u_normalTex;
 
   varying vec2 v_uv;
   varying vec4 v_color;
   varying vec3 v_normal;
   varying vec4 v_lightSpacePos;
+  varying vec3 v_TBN[3];
 
   uniform vec3 u_directionLightDir;
   uniform vec4 u_directionLightColor;
@@ -71,11 +73,23 @@
     return GetShadowValue(currentDepth, projCoords, inRange);
   }
 
+  vec3 GetWorldNormal(vec4 normalTex, vec3 tbn[3]) {
+    vec3 surfaceNormal = tbn[2];
+    return vec3(tbn[0] * normalTex.r + tbn[1] * normalTex.g + tbn[2] * normalTex.b);
+  }
+
   void main () {
     vec4 tex = texture2D(u_mainTex, v_uv);
-    
+    vec4 normalTex = texture2D(u_normalTex, v_uv);
+
+    vec3 mainTexWorldNormal = GetWorldNormal(normalTex, v_TBN);
+
     float shadowValue = ShadowCalculation();
     float lightAngle = max( dot(-u_directionLightDir, v_normal), 0.0);
+
+    if (length(v_TBN[0]) > 0.1)
+      lightAngle = max( dot(-u_directionLightDir, mainTexWorldNormal), 0.0);
+      
     vec4 color = (u_directionLightColor * lightAngle * tex * shadowValue ) + (u_ambientLightColor * tex) * u_mainColor;
     color.r = min(1.0, color.r);
     color.g = min(1.0, color.g);

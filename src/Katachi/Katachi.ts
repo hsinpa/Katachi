@@ -13,6 +13,7 @@ import WebGLDepthBuffer from './WebGL/WebGLDepthBuffer';
 import { Projection } from './Component/Projection';
 import Material from './Component/Material/Material';
 
+
 export type UpdateLoopCallbackType = (timeinSecond : number) => void;
 
 class Katachi extends WebglCanvas {
@@ -83,7 +84,7 @@ class Katachi extends WebglCanvas {
             this.scene.lights.SyncLightRelativePosToCamera(this.scene.camera.transform);
 
         //Depth Map Rendering
-        this.DrawCanvas(this.webglDepthBuffer.depthFrameBuffer, this.webglDepthBuffer.depthMaterial,this.scene.lights.directionLigth.projection, this.targetTextureWidth, this.targetTextureHeight);
+        this.DrawCanvas(this.webglDepthBuffer.depthFrameBuffer, this.webglDepthBuffer.depthMaterial, this.scene.lights.directionLigth.projection, this.targetTextureWidth, this.targetTextureHeight);
 
         //Actual rendering
         this.DrawCanvas(null, null, this.scene.camera.projection, this._gl.canvas.width, this._gl.canvas.height);
@@ -125,7 +126,12 @@ class Katachi extends WebglCanvas {
         var offset = 0;
         var count = shapeObject.mesh.vertCount;
 
-        this._gl.drawArrays(primitiveType, offset, count);
+            if (shapeObject.mesh.meshData.glBufferIndices) {
+                this._gl.bindBuffer(this._gl.ELEMENT_ARRAY_BUFFER, shapeObject.mesh.meshData.glBufferIndices);
+                this._gl.drawElements(primitiveType, count, this._gl.UNSIGNED_SHORT, 0);
+            } else if (shapeObject.mesh.meshData.glBufferIndices == null) {
+                this._gl.drawArrays(primitiveType, offset, count);
+            }
     }
 }
 

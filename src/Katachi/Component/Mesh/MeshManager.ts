@@ -1,6 +1,8 @@
 import Mesh from './Mesh';
 import Quad from './Primitive/Quad';
 import Cube from './Primitive/Cube';
+import Null from './Primitive/Null';
+
 import {MeshIDs} from '../../Utility/KatachiStringSet'
 import { MeshType } from './MeshTypes';
 
@@ -26,6 +28,10 @@ class MeshManager {
 
     CreateCube() {
         return this.CreateAndCacehMeshType(MeshIDs.Cube, Cube);
+    }
+
+    CreateNull(id : string) {
+        return this.CreateAndCacehMeshType(id, Null);
     }
 
     private CreateAndCacehMeshType(id : string, meshFunc : GetMeshFunc) {

@@ -1,6 +1,6 @@
 precision mediump float;
   
-attribute vec4 a_vertex;
+attribute vec3 a_vertex;
 attribute vec4 a_color;
 attribute vec3 a_normal;
 attribute vec2 a_uv;
@@ -14,6 +14,7 @@ uniform mat4 u_inverseTransposeModelMatrix;
 uniform mat4 u_MVPMatrix;
 
 void main () {
+  vec4 vertex = vec4(a_vertex, 1.0);
 
   // v_uv = vec2( (a_position + 1.0 )* 0.5 ); // For Image processing effect
 
@@ -21,5 +22,5 @@ void main () {
   v_color = a_color;
   v_normal = a_normal;
   
-  gl_Position =  u_MVPMatrix * a_vertex;
+  gl_Position =  u_MVPMatrix * vertex;
 }

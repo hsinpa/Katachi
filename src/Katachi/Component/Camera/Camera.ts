@@ -13,7 +13,7 @@ class Camera extends ObjectInterface{
         this.id = RandomChar(8);
         this.name = "MainCamera";
 
-        this.transform.rotation[0] = 1.5 * Math.PI;
+        this.transform.SetEuler( 1.5 * Math.PI, 0,0);
         this.projection = new Projection(this.transform, ProjectionType.Perspective);
     }
 }

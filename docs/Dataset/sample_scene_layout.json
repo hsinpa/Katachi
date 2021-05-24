@@ -1,0 +1,36 @@
+{
+    "gltf" : [
+        {
+            "id" : "gltf@island",
+            "path" : "./Dataset/gltf/floating_island/island.gltf",
+            "position" : [0, -2.5, 0],
+            "orientation" : [0,0,0],
+            "scale" : 4.2,
+            "parent_id" : ""
+        },
+        {
+            "id" : "gltf@handpaint_rock_1",
+            "path" : "./Dataset/gltf/hand_paint_rock/hard_rock.gltf",
+            "position" : [1, -0.4, 1],
+            "orientation" : [0,0,0],
+            "scale" : 0.2,
+            "parent_id" : ""
+        },
+        {
+            "id" : "gltf@handpaint_rock_2",
+            "path" : "./Dataset/gltf/hand_paint_rock/hard_rock.gltf",
+            "position" : [2, -0.6, -3],
+            "orientation" : [0.2,1.5,0],
+            "scale" : 0.15,
+            "parent_id" : ""
+        },
+        {
+            "id" : "gltf@hard_rock_1",
+            "path" : "./Dataset/gltf/hard_rock/hard_rock.gltf",
+            "position" : [-1.5, -0.4, 1.7],
+            "orientation" : [0.2,1.5,0],
+            "scale" : 0.2,
+            "parent_id" : ""
+        }
+    ]
+}

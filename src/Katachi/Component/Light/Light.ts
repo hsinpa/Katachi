@@ -9,12 +9,13 @@ export default class Light {
     
     constructor() {
         this.directionLigth = new DirectionLight();
-        this.ambient_light = vec4.fromValues(0.2, 0.2, 0.2, 1);
+        this.ambient_light = vec4.fromValues(0.3, 0.3, 0.3, 1);
     }
 
     public SyncLightRelativePosToCamera(cameraTransform : Transform) {
-        vec3.add(this.directionLigth.transform.position, this.directionLigth.offsetPostion, cameraTransform.position);
-        this.directionLigth.transform.position[1] = this.directionLigth.offsetPostion[1]; // Fix Y position
+        vec3.add(this.directionLigth.cachePosition, this.directionLigth.offsetPostion, cameraTransform.position);
+
+        this.directionLigth.transform.SetPosition(this.directionLigth.cachePosition[0], this.directionLigth.offsetPostion[1], this.directionLigth.cachePosition[2]);
     }
 
 }

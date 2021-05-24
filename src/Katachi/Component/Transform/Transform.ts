@@ -1,18 +1,40 @@
-import {mat3, mat4, quat, vec3, vec4} from 'gl-matrix';
+import {mat3, mat4, quat, ReadonlyVec3, vec3, vec4} from 'gl-matrix';
 import {Vector, Calculation, VectorType} from './TransformStatic';
 import TransformVector from './TransformVector'
 import {ToEulerAngles} from '../../Utility/UtilityMethod';
 
 class Transform {
-    public relativePosition : vec3;
-    public relativeRotation : vec3;
-    public relativeScale : vec3;
-    private relativeQuaterion : quat;
+    private _relativePosition : vec3;
+    public get relativePosition() : ReadonlyVec3 {
+        return (this._relativePosition);
+    }
+
+    private _relativeRotation : vec3;
+    public get relativeRotation() : ReadonlyVec3 {
+        return (this._relativeRotation);
+    }
+    private _relativeScale : vec3;
+    public get relativeScale() : ReadonlyVec3 {
+        return (this._relativeScale);
+    }
+    private _relativeQuaterion : quat;
+
+    private _position : vec3;
+    public get position() : ReadonlyVec3 {
+        return (this._position);
+    }
     
-    public position : vec3;
     private _rotation : vec3;
-    public scale : vec3;
-    private quaterion : quat;
+    public get rotation() : ReadonlyVec3 {
+        return (this._rotation);
+    }
+
+    private _scale : vec3;
+    public get scale() : ReadonlyVec3 {
+        return (this._scale);
+    }
+
+    private _quaterion : quat;
 
     private _modelMatrix : mat4;
     private _relativeModelMatrix : mat4;
@@ -22,9 +44,6 @@ class Transform {
     private _parent: Transform;
     private _children : Transform[];
 
-    public get rotation() {
-        return (this._rotation);
-    }
 
     public get childCount() {
         return this.children.length;
@@ -56,16 +75,16 @@ class Transform {
     private translateVectorZ : vec3 = vec3.create();
 
     constructor(position : vec3, rotation : vec3, scale : vec3) {
-        this.position = position;
+        this._position = position;
         this._rotation = rotation;
-        this.scale = scale;
-        this.quaterion = quat.create();
-        quat.fromEuler(this.quaterion, rotation[0], rotation[1], rotation[2]);
+        this._scale = scale;
+        this._quaterion = quat.create();
+        quat.fromEuler(this._quaterion, rotation[0], rotation[1], rotation[2]);
 
-        this.relativePosition = vec3.create();
-        this.relativeRotation = vec3.create();
-        this.relativeScale = vec3.create();
-        this.relativeQuaterion = quat.create();
+        this._relativePosition = vec3.create();
+        this._relativeRotation = vec3.create();
+        this._relativeScale = vec3.create();
+        this._relativeQuaterion = quat.create();
         this._relativeModelMatrix = mat4.create();
         this._preSaveRelativeModelMatrix = mat4.create();
 
@@ -80,14 +99,14 @@ class Transform {
     //Should update per frame
     public UpdateModelMatrix() : mat4 {
         if (this._parent == null) {
-            return this.GetModelMatrix(this.position, this.scale, this.quaterion, this._modelMatrix);
+            return this.GetModelMatrix(this._position, this._scale, this._quaterion, this._modelMatrix);
         }
         
-        this.GetModelMatrix(this.relativePosition, this.relativeScale, this.relativeQuaterion, this._relativeModelMatrix);
+        this.GetModelMatrix(this._relativePosition, this._relativeScale, this._relativeQuaterion, this._relativeModelMatrix);
         mat4.mul(this._modelMatrix, this._parent.modelMatrix, this._relativeModelMatrix);
 
         //Update world position data
-        this.SetTransformByMatrix(this.position, this.quaterion, this.rotation, this.scale, this._modelMatrix);
+        this.SetTransformByMatrix(this._position, this._quaterion, this._rotation, this._scale, this._modelMatrix);
  
         return this._modelMatrix;
     }
@@ -100,26 +119,26 @@ class Transform {
 //#region Transform Operation
     public Scale(n : number) {
         if (this.parent == null)
-            vec3.scale(this.scale, this.scale, n); 
+            vec3.scale(this._scale, this._scale, n); 
         else
-            vec3.scale(this.relativeScale, this.relativeScale, n); 
+            vec3.scale(this._relativeScale, this._relativeScale, n); 
     }
 
     public Translate(x : number, y : number, z : number) {
         if (this.parent == null)
-            this.ExecuteTranslate(x, y, z, this.rotation, this.position);
+            this.ExecuteTranslate(x, y, z, this.rotation, this._position);
         else
-            this.ExecuteTranslate(x, y, z, this.relativeRotation, this.relativePosition);
+            this.ExecuteTranslate(x, y, z, this._relativeRotation, this._relativePosition);
     }
 
     public SetPosition(x : number, y : number, z : number) {
         if (this.parent == null)
-            vec3.set(this.position, x, y, z);
+            vec3.set(this._position, x, y, z);
         else
-            vec3.set(this.relativePosition, x, y, z);
+            vec3.set(this._relativePosition, x, y, z);
     }
 
-    private ExecuteTranslate(x : number, y : number, z : number, rotation : vec3, position : vec3) {
+    private ExecuteTranslate(x : number, y : number, z : number, rotation : ReadonlyVec3, position : vec3) {
          let transformVector = this.transformVector.UpdateTransformVector(rotation);
  
          vec3.scale(this.translateVectorX, transformVector.right, x);
@@ -134,16 +153,16 @@ class Transform {
 
     Rotate(roll : number, pitch : number, yaw:number) {
         if (this.parent == null)
-            this.ExecuteRotate(roll, pitch, yaw, this.quaterion);
+            this.ExecuteRotate(roll, pitch, yaw, this._quaterion);
         else
-            this.ExecuteRotate(roll, pitch, yaw, this.relativeQuaterion);
+            this.ExecuteRotate(roll, pitch, yaw, this._relativeQuaterion);
     }
 
     SetEuler(x : number, y : number, z : number) {
         if (this.parent == null)
-            this.ExecuteEuler(x,y,z, this.quaterion, this._rotation);
+            this.ExecuteEuler(x,y,z, this._quaterion, this._rotation);
         else
-            this.ExecuteEuler(x,y,z, this.relativeQuaterion, this.relativeRotation);
+            this.ExecuteEuler(x,y,z, this._relativeQuaterion, this._relativeRotation);
     }
 
     private ExecuteRotate(roll : number, pitch : number, yaw:number, quaterion : quat) {
@@ -164,17 +183,17 @@ class Transform {
     //Should only execute during SetParent Func
     public UpdateRelativeTransformByParent(parentTransform : Transform) {
         if (parentTransform == null) {
-            this.SetTransformByMatrix(this.position, this.quaterion, this.rotation, this.scale, this._modelMatrix);
+            this.SetTransformByMatrix(this._position, this._quaterion, this._rotation, this._scale, this._modelMatrix);
             return;
         }
 
-        let worldModelMatrix = this.GetModelMatrix(this.position, this.scale, this.quaterion, this.modelMatrix);
+        let worldModelMatrix = this.GetModelMatrix(this._position, this._scale, this._quaterion, this.modelMatrix);
         let inverseParentMatrix = mat4.create();
         mat4.invert(inverseParentMatrix, parentTransform.UpdateModelMatrix());
 
         mat4.mul(this._preSaveRelativeModelMatrix, inverseParentMatrix, worldModelMatrix);
 
-        this.SetTransformByMatrix(this.relativePosition, this.relativeQuaterion, this.relativeRotation, this.relativeScale, this._preSaveRelativeModelMatrix);
+        this.SetTransformByMatrix(this._relativePosition, this._relativeQuaterion, this._relativeRotation, this._relativeScale, this._preSaveRelativeModelMatrix);
     }
 
     private SetTransformByMatrix(position : vec3, quaterion : quat, rotation:vec3, scale :vec3, matrix : mat4 ) {

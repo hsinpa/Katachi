@@ -3,33 +3,40 @@ import {MeshType} from '../MeshTypes';
 export default function CreateQuadMesh() : MeshType{
 
     let vertex = GetQuadVertex();
-    let color = GetColor([1,1,1,1], 6);
     let uv = GetQuadUV();
 
     //Front, Right, Left, Top, Bottom, Back
     let normal = GetQuadNormal();
+    let tangent = GetQuadTangent();
 
     return {
         vertex : vertex,
-        color : color,
         uv : uv,
         normal : normal,
+        tangent : tangent,
         glUsageType : WebGLRenderingContext.STATIC_DRAW,
 
         nativeVertex : new Float32Array(vertex),
         nativeNormal : new Float32Array(normal),
         nativeUV : new Float32Array(uv),
-        nativecolor : new Float32Array(color)
+        nativeTangent : new Float32Array(tangent),
+
+        vertexCount : vertex.length,
+        glBufferIndices : null,
+        glBufferVertex:null,
+        glBufferNormal:null,
+        glBufferTangent : null,
+        glBufferUV:null
     }
 }
 
 function GetQuadVertex() : number[] {
-    return [-1, -1, 0 ,1,
-        -1, 1, -0 ,1,
-        1, -1, 0, 1,
-        1, -1, 0, 1,
-        -1, 1, 0, 1,
-        1, 1, 0, 1];
+    return [-1, -1, 0,
+        -1, 1, 0,
+        1, -1, 0,
+        1, -1, 0,
+        -1, 1, 0,
+        1, 1, 0];
 }
 
 function GetQuadUV() : number[] {
@@ -48,6 +55,15 @@ function GetQuadNormal() : number[] {
         0, 0, 1,
         0, 0, 1,
         0, 0, 1];
+}
+
+function GetQuadTangent() : number[] {
+    return [0, 0, 0, 0,
+        0, 0, 0, 0,
+        0, 0, 0, 0,
+        0, 0, 0, 0,
+        0, 0, 0, 0,
+        0, 0, 0, 0];
 }
 
 function GetColor(color : number[], vertexCount : number) {

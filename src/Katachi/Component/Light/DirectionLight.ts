@@ -8,6 +8,7 @@ export default class DirectionLight extends ObjectInterface {
     projection : Projection;
 
     offsetPostion : vec3;
+    cachePosition : vec3 = vec3.create();
 
     constructor() {
         super(); 

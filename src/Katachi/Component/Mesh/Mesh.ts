@@ -4,7 +4,7 @@ class Mesh {
     private _meshData : MeshType;
 
     public get vertCount() {
-        return Math.round(this._meshData.vertex.length / 4);
+        return Math.round(this._meshData.vertexCount / 3);
     }
 
     public get meshData() {
@@ -20,10 +20,10 @@ class Mesh {
         this._meshData.nativeVertex = new Float32Array(vertex);
     }
 
-    public SetColor(color : number[]) {
-        this._meshData.color = color;
-        this._meshData.nativecolor = new Float32Array(color);
-    }
+    // public SetColor(color : number[]) {
+    //     this._meshData.color = color;
+    //     this._meshData.nativecolor = new Float32Array(color);
+    // }
 
     //Vector2
     public SetUV(uv : number[]) {

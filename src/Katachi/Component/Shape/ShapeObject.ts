@@ -55,10 +55,10 @@ class ShapeObject extends ObjectInterface {
     
 //#region Process During render time
     ProcessMaterialAttr(gl : WebGLRenderingContext, material : Material) {
-        material.ExecuteAttributeProp(gl, DefaultVertexShaderParameter.vertex, this.mesh.meshData.nativeVertex );
-        material.ExecuteAttributeProp(gl, DefaultVertexShaderParameter.color, this.mesh.meshData.nativecolor );
-        material.ExecuteAttributeProp(gl, DefaultVertexShaderParameter.uv, this.mesh.meshData.nativeUV );
-        material.ExecuteAttributeProp(gl, DefaultVertexShaderParameter.normal, this.mesh.meshData.nativeNormal );    
+        material.ExecuteAttributeProp(gl, DefaultVertexShaderParameter.vertex, this.mesh.meshData.nativeVertex, this.mesh.meshData.glBufferVertex);
+        material.ExecuteAttributeProp(gl, DefaultVertexShaderParameter.uv, this.mesh.meshData.nativeUV, this.mesh.meshData.glBufferUV);
+        material.ExecuteAttributeProp(gl, DefaultVertexShaderParameter.normal, this.mesh.meshData.nativeNormal, this.mesh.meshData.glBufferNormal);    
+        material.ExecuteAttributeProp(gl, DefaultVertexShaderParameter.tangent, this.mesh.meshData.nativeTangent, this.mesh.meshData.glBufferTangent);    
     }
 
     ProcessMaterialUniform(gl : WebGLRenderingContext, material : Material, time : number, worldMatrix : mat4, modelInverseTMatrix  : mat4, mvpMatrix : mat4, light: Light,

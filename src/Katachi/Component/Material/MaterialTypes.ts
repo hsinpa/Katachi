@@ -18,7 +18,7 @@ export interface GLUniformTextures {
 } 
 
 export interface CustomShaderProperties {
-    value : number[],
+    value : number[] | WebGLBuffer,
     drawType : number // gl.STATIC_DRAW ...
     vertexPointer : VertexPointerConfig
 }
@@ -51,16 +51,18 @@ export const DefaultVertexShaderParameter = {
     color : "a_color",
     uv : "a_uv",
     normal : "a_normal",
+    tangent : "a_tangent",
 
     //Uniform
     time : "u_time",
     mainColor : "u_mainColor",
     mainTex : "u_mainTex",
+    normalTex : "u_normalTex",
     mainTex_Texel : "u_mainTex_Texel",
     modelMatrix : "u_modelMatrix",
+    viewMatrix : "u_viewMatrix",
     inverseTransposeModelMatrix : "u_inverseTransposeModelMatrix",
     modelViewProjectionMatrix : "u_MVPMatrix",
-
 
     //Uniform Light
     directionLightDir : "u_directionLightDir",
@@ -73,7 +75,8 @@ export const DefaultVertexShaderParameter = {
 
 export interface UniformTextureDefine {
     id : string,
-    texture? : string
+    texture? : string,
+    textureBuffer? : WebGLTexture
 }
 
 export interface UniformProperties {

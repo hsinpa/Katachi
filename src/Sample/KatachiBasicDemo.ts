@@ -6,14 +6,16 @@ import Camera from '../Katachi/Component/Camera/Camera';
 import  { ProjectionType } from '../Katachi/Component/Projection';
 
 import InputHandler, { InputMovementType } from './Input/InputHandler';
-import {DeltaTime} from './StaticValues'
+import {DeltaTime, SceneLayoutType} from './StaticValues'
+import DemoSceneLoader from './DemoSceneLoader'
 
 class KatachiBasicDemo {
     private katachi : Katachi;
+    private sceneLoader : DemoSceneLoader;
+
     private mainQuad : ShapeObject;
     private mainCube : ShapeObject;
     private mainCubeTwo : ShapeObject;
-    private mainFloor : ShapeObject;
 
     private inputHandler : InputHandler
     private katachiIsReady: boolean;
@@ -22,9 +24,10 @@ class KatachiBasicDemo {
         this.inputHandler = new InputHandler();
         this.inputHandler.RegisterMovementEvent(this.OnMovementEvent.bind(this));
         this.inputHandler.RegisterButtonEvent(this.OnMouseClickEvent.bind(this));
+        this.sceneLoader = new DemoSceneLoader();
     }
 
-    async SetUp(katachi : Katachi) {
+    async SetUp(katachi : Katachi, sceneLayoutType : SceneLayoutType) {
         this.katachi = katachi;
         this.katachiIsReady = await katachi.SetUp(this.UpdateLoop.bind(this));
 
@@ -33,44 +36,32 @@ class KatachiBasicDemo {
         if (this.katachiIsReady) {
             this.inputHandler.RegisterMouseMovement(canvasDom, this.OnMouseEvent.bind(this));
 
-            //this.katachi.scene.camera.projection.projectionType = ProjectionType.Perspective;
+            this.sceneLoader.LoadGLTFContent(katachi, sceneLayoutType);
+
             this.mainQuad = katachi.shapeBuilder.BuildQuad();
             this.mainCube = katachi.shapeBuilder.BuildCube();
             this.mainCubeTwo = katachi.shapeBuilder.BuildCube();
-            this.mainFloor = katachi.shapeBuilder.BuildQuad();
 
+            this.mainQuad.transform.SetPosition(-1.2, 0, -1);
             this.mainQuad.transform.Scale(0.2);
-            this.mainQuad.transform.position[2] = -1;
-            this.mainQuad.transform.position[0] = -1.2;
 
+            this.mainCube.transform.SetPosition(0, 0,-2);
             this.mainCube.transform.Scale(0.5);
-            this.mainCube.transform.position[2] = -2;
 
             this.mainCubeTwo.transform.Scale(0.2);
-            // this.mainCubeTwo.transform.position[2] = -2;
-            // this.mainCubeTwo.transform.position[1] = 1;
 
             katachi.scene.SetParent(this.mainCube, this.mainCubeTwo);
 
-            this.mainFloor.transform.Rotate( Math.PI*1.5, 0,0 );
-
-            //this.mainFloor.transform.rotation[0] = Math.PI*1.5;
-            this.mainFloor.transform.position[1] = -0.5;
-
-            this.mainFloor.transform.Scale(5);
 
             katachi.scene.AddShapeObj(this.mainCube);
             katachi.scene.AddShapeObj(this.mainQuad);
-            katachi.scene.AddShapeObj(this.mainFloor);
             katachi.scene.AddShapeObj(this.mainCubeTwo);
-
 
             this.katachi.materialManager.LoadTextureToObject(this.mainQuad, "u_mainTex", "./texture/BrickTex_256.jpg");
             this.katachi.materialManager.LoadTextureToObject(this.mainCube, "u_mainTex", "./texture/Personal_01.png");
             
             this.mainCube.SetCustomUniformAttr("u_mainColor", {value : [1, 1, 1, 1], isMatrix : false, function : this.katachi.webglContext.uniform4fv})
             this.mainQuad.SetCustomUniformAttr("u_mainColor", {value : [0, 0, 1, 1], isMatrix : false, function : this.katachi.webglContext.uniform4fv})
-            this.mainFloor.SetCustomUniformAttr("u_mainColor", {value : [1,1,1, 1], isMatrix : false, function : this.katachi.webglContext.uniform4fv})
         }
     }
 
@@ -83,15 +74,18 @@ class KatachiBasicDemo {
 
     OnMouseEvent(moveDelta : number[]) {
         const mouseSpeed = 0.3;
-        this.katachi.scene.camera.transform.rotation[0] += moveDelta[0] * DeltaTime * mouseSpeed;
-        this.katachi.scene.camera.transform.rotation[1] += -moveDelta[1] * DeltaTime * mouseSpeed;
+        let cameraRot = this.katachi.scene.camera.transform.rotation;
+
+        this.katachi.scene.camera.transform.SetEuler(cameraRot[0] + moveDelta[0] * DeltaTime * mouseSpeed, 
+                                                    cameraRot[1] -moveDelta[1] * DeltaTime * mouseSpeed, 
+                                                    cameraRot[2]);
 
         let rightAngleRadian = 0.5 * Math.PI;
 
-        if(this.katachi.scene.camera.transform.rotation[1] > rightAngleRadian)
-            this.katachi.scene.camera.transform.rotation[1] =  rightAngleRadian;
+        if(cameraRot[1] > rightAngleRadian)
+            this.katachi.scene.camera.transform.SetEuler(cameraRot[0], rightAngleRadian, cameraRot[2]);
         if(this.katachi.scene.camera.transform.rotation[1] < -rightAngleRadian)
-            this.katachi.scene.camera.transform.rotation[1] = -rightAngleRadian;
+            this.katachi.scene.camera.transform.SetEuler(cameraRot[0], -rightAngleRadian, cameraRot[2]);
               //console.log(this.katachi.scene.camera.transform.rotation[0]);
 
         //this.mainQuad.transform.rotation[1] += -moveDelta[1] * 0.02;
