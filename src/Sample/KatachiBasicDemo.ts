@@ -40,11 +40,11 @@ class KatachiBasicDemo {
             this.mainCube = katachi.shapeBuilder.BuildCube();
             this.mainCubeTwo = katachi.shapeBuilder.BuildCube();
 
-            this.mainCube.transform.SetPosition(0, -0.2,-2);
+            this.mainCube.transform.SetPosition(0, -0.1,-2);
             this.mainCube.transform.Scale(0.3);
 
             this.mainCubeTwo.transform.Scale(0.1);
-            this.mainCubeTwo.transform.SetPosition(0, -0.3,-1);
+            this.mainCubeTwo.transform.SetPosition(0, -0.1,-0.7);
 
             katachi.scene.SetParent(this.mainCube, this.mainCubeTwo);
 

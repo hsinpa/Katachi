@@ -45,8 +45,8 @@ export default class DemoSceneLoader {
         let parentObject = this.GetGLTFShapeObject(gltfMarkup.parent_id);
 
         shapeObject.transform.Scale(gltfMarkup.scale);
-        shapeObject.transform.SetEuler(gltfMarkup.orientation[0], gltfMarkup.orientation[1], gltfMarkup.orientation[2]);
         shapeObject.transform.SetPosition(gltfMarkup.position[0], gltfMarkup.position[1], gltfMarkup.position[2]);
+        shapeObject.transform.SetEuler(gltfMarkup.orientation[0], gltfMarkup.orientation[1], gltfMarkup.orientation[2]);
 
         katachi.scene.AddShapeObj(shapeObject);
         if (parentObject != null)

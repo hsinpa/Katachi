@@ -65,6 +65,7 @@ class Katachi extends WebglCanvas {
 
         this.webglDepthBuffer.PrepareDepthFrameBuffer(this.targetTextureWidth, this.targetTextureHeight);
         this.webglDepthBuffer.CacheDepthMaterial();
+        this.webglDepthBuffer.CacheStencilOutlineMaterial();
 
         window.requestAnimationFrame(this.PerformGameLoop.bind(this));
 
@@ -83,6 +84,8 @@ class Katachi extends WebglCanvas {
         if (this.scene.lights != null && this.time % 0.5 > 0.45)
             this.scene.lights.SyncLightRelativePosToCamera(this.scene.camera.transform);
 
+        this._gl.stencilOp(this._gl.KEEP, this._gl.KEEP, this._gl.REPLACE);
+        
         //Depth Map Rendering
         this.DrawCanvas(this.webglDepthBuffer.depthFrameBuffer, this.webglDepthBuffer.depthMaterial, this.scene.lights.directionLigth.projection, this.targetTextureWidth, this.targetTextureHeight);
 
@@ -98,7 +101,7 @@ class Katachi extends WebglCanvas {
         gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer);
         gl.viewport(0, 0, canvasWidth, canvasHeight);        
         gl.clearColor(0, 0, 0, 0);
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);     
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT);     
 
         projection.aspectRatio = canvasWidth / canvasHeight;
         let cameraViewMatrix = projection.viewMatrix;

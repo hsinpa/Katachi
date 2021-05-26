@@ -15,6 +15,12 @@
             "id" : "glprogram@depth_material",
             "vertex" : "./glsl/basic/depth_mat.vert",
             "fragment" : "./glsl/basic/depth_mat.frag"
+        },
+        {
+            "id" : "glprogram@stencil_outline_material",
+            "vertex" : "./glsl/basic/stencil_outline.vert",
+            "fragment" : "./glsl/basic/stencil_outline.frag"
+
         }
     ]
 }

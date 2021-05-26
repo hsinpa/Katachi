@@ -27,6 +27,12 @@ class WebGLDepthBuffer {
         return this._depthMaterial;
     }
 
+    private _stencilOutlineMaterial : Material;
+    public get stencilOutlineMaterial() {
+        return this._stencilOutlineMaterial;
+    }
+
+
     private gl : WebGLRenderingContext;
     private webglResouceAlloc : WebglResource;
     private materialManager : MaterialManager;
@@ -44,6 +50,15 @@ class WebGLDepthBuffer {
         let defaultMatConfig = GetDefaultMaterialConfig(this.gl);
 
         this._depthMaterial.PreloadProperties(this.gl, defaultMatConfig);
+    }
+
+    public CacheStencilOutlineMaterial() {
+        let glShaderSet = this.materialManager.GetGlShaderSet(GLProgramIDs.StencilOutline);
+        this._stencilOutlineMaterial = this.materialManager.CreateMaterial(glShaderSet.vertShader, glShaderSet.fragShader);
+
+        let defaultMatConfig = GetDefaultMaterialConfig(this.gl);
+
+        this._stencilOutlineMaterial.PreloadProperties(this.gl, defaultMatConfig);
     }
     
     public PrepareDepthFrameBuffer(width : number, height : number) {

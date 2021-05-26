@@ -20,7 +20,7 @@
             "id" : "gltf@handpaint_rock_2",
             "path" : "./Dataset/gltf/hand_paint_rock/hard_rock.gltf",
             "position" : [2, -0.6, -3],
-            "orientation" : [0.2,1.5,0],
+            "orientation" : [0,0,0],
             "scale" : 0.15,
             "parent_id" : ""
         },
@@ -28,15 +28,24 @@
             "id" : "gltf@hard_rock_1",
             "path" : "./Dataset/gltf/hard_rock/hard_rock.gltf",
             "position" : [-1.5, -0.4, 1.7],
-            "orientation" : [0.2,1.5,0],
+            "orientation" : [0,45,0],
             "scale" : 0.2,
             "parent_id" : ""
         },
         {
             "id" : "gltf@low_poly_tree_1",
             "path" : "./Dataset/gltf/low_poly_tree/low_poly_tree.gltf",
-            "position" : [-1.3, -0.5, -2.6],
-            "orientation" : [0, 1.5,-0.5],
+            "position" : [-2.3, -0.45, -1.6],
+            "orientation" : [0, 45,-10],
+            "scale" : 0.2,
+            "parent_id" : ""
+        },
+
+        {
+            "id" : "gltf@low_poly_pillar_1",
+            "path" : "./Dataset/gltf/pillar/pillar.gltf",
+            "position" : [0, -0.45, -2],
+            "orientation" : [90, 0,0],
             "scale" : 0.2,
             "parent_id" : ""
         }

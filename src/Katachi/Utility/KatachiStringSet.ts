@@ -1,6 +1,7 @@
 export let GLProgramIDs = {
     Standard : "glprogram@standard_material",
     Unlit : "glprogram@unlit_material",
+    StencilOutline : "glprogram@stencil_outline_material",
     DepthMap : "glprogram@depth_material"
 }
 

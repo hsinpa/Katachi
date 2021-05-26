@@ -22,8 +22,9 @@ class WebglCanvas {
         this._configJson = configJson;
 
         this._canvasDom = document.querySelector(configJson.canvas_dom_query);
-        this._gl = this._canvasDom.getContext('webgl');
+        this._gl = this._canvasDom.getContext('webgl', {stencil: true});
         this._gl.enable(this._gl.DEPTH_TEST);
+        this._gl.enable(this._gl.STENCIL_TEST);
 
         this.AutoSetCanvasSize();
 
