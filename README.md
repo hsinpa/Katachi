@@ -3,6 +3,7 @@ Super simple webgl 3D engine, but it work.
 
 # Feature
 - Force you to write shader code
+- Phong reflection model
 - Directional light shadow map
 - Hierarchy modeling
 - Work well with css and responsive to window resize
@@ -118,6 +119,54 @@ Set object as child to another object, therefore, its transform now act relative
   katachi.scene.SetParent(childObject, parentObject);
   katachi.scene.SetParent(childObject, null); // Move childObject back to root hierarchy
 ```
+
+## GLTF Loader
+Only support gltf seperate files (.gltf, .bing, textures)
+
+### GLTF Scene JSON Layout
+Type
+```typescript
+export interface SceneLayoutType {
+    gltf : GLTFMarkoutType[];
+}
+
+export interface GLTFMarkoutType {
+    id: string,
+    path : string;
+    position : number[]; //Vector3
+    orientation : number[]; //Vector3
+    scale : number;
+    specular : number,
+    parent_id : string;
+}
+```
+Json sample code
+ ```text
+[
+    {
+        "id" : "gltf@island", //Unique from others
+        "path" : "./Dataset/gltf/floating_island/island.gltf", //Relative path to gltf files
+        "position" : [0, -2.5, 0], 
+        "orientation" : [0,0,0], //In degree unit
+        "scale" : 4.2,
+        "specular" : 0.1, // Specular light for phong reflection model
+        "parent_id" : "" // Hierarchy modeling; Insert id that is instantiate before this object; no parent if empty
+    }
+]
+ ```
+```typescript
+    import GLTFSceneLoader from './Katachi/Utility/GLTFSceneLoader';
+    
+    let gltfSceneLoader = new GLTFSceneLoader();
+    
+    async function LoadSceneContent(katachi : Katachi, gltfSceneLayout : SceneLayoutType) {
+            await gltfSceneLoader.LoadGLTFContent(katachi, sceneLayoutType);    
+            
+            //Get ShapeObject
+            let selectedShapeObject : ShapeObject = GetGLTFShapeObject.GetGLTFShapeObject("gltf@island");
+    }
+```
+
 
 ## Material
 
