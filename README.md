@@ -8,7 +8,7 @@ Super simple webgl 3D engine, but it work.
 - Hierarchy modeling
 - Work well with css and responsive to window resize
 
-# Demo (Only primitive shape)
+# Katachi showcase
 https://hsinpa.github.io/Katachi/
 
 ### Instruction
