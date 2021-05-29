@@ -11,6 +11,9 @@ Super simple webgl 3D engine, but it work.
 # Demo (Only primitive shape)
 https://hsinpa.github.io/Katachi/
 
+### Instruction
+the ball will start rolling, if you go close to temple or mouse left click
+
 # Documentation
 ## Initialization
 
