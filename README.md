@@ -124,7 +124,6 @@ Set object as child to another object, therefore, its transform now act relative
 Only support gltf seperate files (.gltf, .bing, textures)
 
 ### GLTF Scene JSON Layout
-Type
 ```typescript
 export interface SceneLayoutType {
     gltf : GLTFMarkoutType[];
@@ -154,6 +153,7 @@ Json sample code
     }
 ]
  ```
+ ### GLTFSceneLoader Implementation
 ```typescript
     import GLTFSceneLoader from './Katachi/Utility/GLTFSceneLoader';
     
