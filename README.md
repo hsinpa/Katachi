@@ -227,3 +227,4 @@ Yes, they look pretty straight forward
 
 ## Third party tool
 - gl-matrix (prettry good one, it function as Float32Array by default)
+- webgl-gltf (So I don't have to parse gltf binary file)
