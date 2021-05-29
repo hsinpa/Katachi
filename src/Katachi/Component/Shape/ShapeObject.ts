@@ -4,7 +4,7 @@ import Material from '../Material/Material';
 import {DefaultVertexShaderParameter, UniformProperties, UniformAttrType, GLUniformTextures} from '../Material/MaterialTypes'
 import ObjectInterface from '../Object';
 import Camera from '../Camera/Camera';
-import { mat4, vec2 } from 'gl-matrix';
+import { mat4, ReadonlyVec3, vec2, vec3 } from 'gl-matrix';
 import WebglResource from '../../WebGL/WebglResource';
 import DirectionLight from '../Light/DirectionLight';
 import Light from '../Light/Light';
@@ -61,13 +61,14 @@ class ShapeObject extends ObjectInterface {
         material.ExecuteAttributeProp(gl, DefaultVertexShaderParameter.tangent, this.mesh.meshData.nativeTangent, this.mesh.meshData.glBufferTangent);    
     }
 
-    ProcessMaterialUniform(gl : WebGLRenderingContext, material : Material, time : number, worldMatrix : mat4, modelInverseTMatrix  : mat4, mvpMatrix : mat4, light: Light,
-        depthTexture : WebGLTexture, depthTextureTexel : vec2) {
+    ProcessMaterialUniform(gl : WebGLRenderingContext, material : Material, time : number, worldMatrix : mat4, modelInverseTMatrix  : mat4, mvpMatrix : mat4, 
+        cameraWorldPos : ReadonlyVec3, light: Light, depthTexture : WebGLTexture, depthTextureTexel : vec2) {
         //Default System attr, color and time
         material.ExecuteUniformProp(DefaultVertexShaderParameter.time, time, gl.uniform1f.bind(gl));
         material.ExecuteUniformProp(DefaultVertexShaderParameter.modelMatrix, worldMatrix, gl.uniformMatrix4fv.bind(gl), true);
         material.ExecuteUniformProp(DefaultVertexShaderParameter.inverseTransposeModelMatrix, modelInverseTMatrix, gl.uniformMatrix4fv.bind(gl), true);
         material.ExecuteUniformProp(DefaultVertexShaderParameter.modelViewProjectionMatrix, mvpMatrix, gl.uniformMatrix4fv.bind(gl), true);
+        material.ExecuteUniformProp(DefaultVertexShaderParameter.cameraPos, cameraWorldPos, gl.uniform3fv.bind(gl));
 
         //Might be null, if user remove it
         if (light != null) {

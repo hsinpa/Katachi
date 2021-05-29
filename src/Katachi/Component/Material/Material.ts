@@ -85,6 +85,8 @@ class Material {
                     let texture = (uniTextureDefine.textureBuffer == null) ? gl.createTexture() : uniTextureDefine.textureBuffer;
 
                     let cache = this.glResource.SaveGlobalTextureSource(textureKey, texture, gl.TEXTURE0);
+                    
+                    
                     gl.activeTexture(cache.globalIndex);
                     gl.bindTexture(gl.TEXTURE_2D, texture);
                     
@@ -92,6 +94,10 @@ class Material {
                         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([255, 255, 255, 255])); 
 
                     gl.uniform1i(uniform, cache.globalIndex - gl.TEXTURE0); 
+                    
+                    //Reset texture
+                    gl.activeTexture(gl.TEXTURE0);
+
                 }
             }
         }

@@ -1,29 +1,28 @@
 import Katachi from '../Katachi/Katachi';
 import Mesh from '../Katachi/Component/Mesh/Mesh';
 import ShapeObject from '../Katachi/Component/Shape/ShapeObject';
-import {vec2, vec3} from 'gl-matrix';
+import {ReadonlyVec3, vec2, vec3} from 'gl-matrix';
 import Camera from '../Katachi/Component/Camera/Camera';
 import  { ProjectionType } from '../Katachi/Component/Projection';
 
 import InputHandler, { InputMovementType } from './Input/InputHandler';
 import {DeltaTime, SceneLayoutType} from './StaticValues'
-import DemoSceneLoader from './DemoSceneLoader'
+import GLTFSceneLoader from '../Katachi/Utility/GLTFSceneLoader'
+import DemoSceneAnimation from './DemoSceneAnimation';
 
 class KatachiBasicDemo {
     private katachi : Katachi;
-    private sceneLoader : DemoSceneLoader;
-
-    private mainCube : ShapeObject;
-    private mainCubeTwo : ShapeObject;
+    private sceneLoader : GLTFSceneLoader;
 
     private inputHandler : InputHandler
     private sceneIsReady: boolean = false;
+    private sceneAnimator : DemoSceneAnimation;
 
     constructor() {
         this.inputHandler = new InputHandler();
         this.inputHandler.RegisterMovementEvent(this.OnMovementEvent.bind(this));
         this.inputHandler.RegisterButtonEvent(this.OnMouseClickEvent.bind(this));
-        this.sceneLoader = new DemoSceneLoader();
+        this.sceneLoader = new GLTFSceneLoader();
     }
 
     async SetUp(katachi : Katachi, sceneLayoutType : SceneLayoutType) {
@@ -36,24 +35,10 @@ class KatachiBasicDemo {
             this.inputHandler.RegisterMouseMovement(canvasDom, this.OnMouseEvent.bind(this));
 
             await this.sceneLoader.LoadGLTFContent(katachi, sceneLayoutType);
+            this.sceneAnimator = new DemoSceneAnimation(this.katachi.webglContext, this.sceneLoader, this.katachi.scene.camera.transform);
 
-            this.mainCube = katachi.shapeBuilder.BuildCube();
-            this.mainCubeTwo = katachi.shapeBuilder.BuildCube();
-
-            this.mainCube.transform.SetPosition(0, -0.1,-2);
-            this.mainCube.transform.Scale(0.3);
-
-            this.mainCubeTwo.transform.Scale(0.1);
-            this.mainCubeTwo.transform.SetPosition(0, -0.1,-0.7);
-
-            katachi.scene.SetParent(this.mainCube, this.mainCubeTwo);
-
-            katachi.scene.AddShapeObj(this.mainCube);
-            katachi.scene.AddShapeObj(this.mainCubeTwo);
-
-            this.katachi.materialManager.LoadTextureToObject(this.mainCube, "u_mainTex", "./texture/Personal_01.png");
-            
-            this.mainCube.SetCustomUniformAttr("u_mainColor", {value : [1, 1, 1, 1], isMatrix : false, function : this.katachi.webglContext.uniform4fv})
+            //this.katachi.materialManager.LoadTextureToObject(this.mainCube, "u_mainTex", "./texture/Personal_01.png");
+            //this.mainCube.SetCustomUniformAttr("u_mainColor", {value : [1, 1, 1, 1], isMatrix : false, function : this.katachi.webglContext.uniform4fv})
 
             this.sceneIsReady = true;
         }
@@ -86,32 +71,22 @@ class KatachiBasicDemo {
     }
 
     OnMouseClickEvent() {
-        let parent = (this.mainCubeTwo.transform.parent == null) ? this.mainCube.transform : null;
-        console.log(parent);
+        // let parent = (this.mainCubeTwo.transform.parent == null) ? this.mainCube.transform : null;
+        // console.log(parent);
 
-        this.mainCubeTwo.transform.SetParent(parent);
+        // this.mainCubeTwo.transform.SetParent(parent);
+
+        this.sceneAnimator.forceAnimation = !this.sceneAnimator.forceAnimation;
     }
 
     UpdateLoop(timeSecond : number) {
 
         this.inputHandler.OnUpdate();
 
-        if (!this.sceneIsReady) return;
+        if (!this.sceneIsReady || this.sceneAnimator == null) return;
 
-        // console.log(this.katachi.scene.lights.directionLigth.transform.rotation[0]);
-        //this.mainCube.transform.Translate(Math.sin(timeSecond)*0.02, 0, 0);
-        //this.mainCube.transform.Rotate(0.01, 0, 0);
-        //this.mainCube.transform.rotation[1] += 0.01;
-
-        this.mainCube.transform.Rotate(0, 0.01, 0);
-
-        // let camX = Math.sin(timeSecond) * 2;
-        // let camZ = Math.cos(timeSecond) * 2;
-
-        // this.katachi.scene.camera.transform.position[0] =camX;
-        // this.katachi.scene.camera.transform.position[2] =camZ;
+        this.sceneAnimator.OnUpdate(timeSecond);
     }
-
 }
 
 export default KatachiBasicDemo;

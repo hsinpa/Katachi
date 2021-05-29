@@ -4,6 +4,16 @@ import Mesh from '../Mesh/Mesh';
 import Transform from '../Transform/Transform';
 import ShapeObject from './ShapeObject';
 
+export interface GLTFMarkoutType {
+    id: string,
+    path : string;
+    position : number[]; //Vector3
+    orientation : number[]; //Vector3
+    scale : number;
+    specular : number,
+    parent_id : string;
+}
+
 export default class GLTFShapeObject extends ShapeObject {
     public gltfModel : GLTFPlugin.Model;
 

@@ -12,7 +12,7 @@ import ShapeObject from './Component/Shape/ShapeObject';
 import WebGLDepthBuffer from './WebGL/WebGLDepthBuffer';
 import { Projection } from './Component/Projection';
 import Material from './Component/Material/Material';
-
+import ScreenMaterial from './Component/PostProcessing/ScreenMaterial';
 
 export type UpdateLoopCallbackType = (timeinSecond : number) => void;
 
@@ -123,7 +123,7 @@ class Katachi extends WebglCanvas {
         shapeObject.ProcessMaterialAttr(this._gl, material);
 
         shapeObject.ProcessMaterialUniform(this._gl, material, this.time, shapeObject.transform.modelMatrix, shapeObject.transform.InverseTransposeMatrix,
-             mvpMatrix, this.scene.lights, (this.currentFrameBuffer == null) ? this.webglDepthBuffer.depthMapTex : null, this.targetTextureTexel);
+             mvpMatrix, this.scene.camera.transform.position, this.scene.lights, (this.currentFrameBuffer == null) ? this.webglDepthBuffer.depthMapTex : null, this.targetTextureTexel);
 
         var primitiveType = this._gl.TRIANGLES;
         var offset = 0;

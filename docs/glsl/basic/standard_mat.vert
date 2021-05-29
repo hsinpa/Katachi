@@ -7,6 +7,7 @@ attribute vec3 a_normal;
 attribute vec4 a_tangent;
 
 varying vec2 v_uv;
+varying vec4 v_worldVertex;
 varying vec3 v_normal;
 varying vec4 v_color;
 varying vec4 v_lightSpacePos;
@@ -35,6 +36,7 @@ void main () {
   v_TBN[1] = B;
   v_TBN[2] = v_normal;
 
-  v_lightSpacePos = u_lightSpaceMVPMatrix * (u_modelMatrix * vertex);
+  v_worldVertex = u_modelMatrix * vertex;
+  v_lightSpacePos = u_lightSpaceMVPMatrix * (v_worldVertex);
   gl_Position =  u_MVPMatrix * vertex;
 }

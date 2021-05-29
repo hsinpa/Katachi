@@ -8,3 +8,16 @@ export interface StringVector2 {
     y : string;
 }
 
+export interface SceneLayoutType {
+    gltf : GLTFMarkoutType[];
+}
+
+export interface GLTFMarkoutType {
+    id: string,
+    path : string;
+    position : number[]; //Vector3
+    orientation : number[]; //Vector3
+    scale : number;
+    specular : number,
+    parent_id : string;
+}

@@ -6,11 +6,15 @@
   uniform sampler2D u_depthTex;
   uniform sampler2D u_normalTex;
 
+  varying vec4 v_worldVertex;
   varying vec2 v_uv;
   varying vec4 v_color;
   varying vec3 v_normal;
   varying vec4 v_lightSpacePos;
   varying vec3 v_TBN[3];
+
+  uniform vec3 u_cameraPos;
+  uniform float u_specularLightStrength;
 
   uniform vec3 u_directionLightDir;
   uniform vec4 u_directionLightColor;
@@ -73,8 +77,9 @@
   }
 
   vec3 GetWorldNormal(vec4 normalTex, vec3 tbn[3]) {
-    vec3 surfaceNormal = tbn[2];
-    return vec3(tbn[0] * normalTex.r + tbn[1] * normalTex.g + tbn[2] * normalTex.b);
+    vec4 nTex = normalTex * 2.0 - 1.0;
+
+   return normalize((tbn[0] * nTex.r) + (tbn[1] * nTex.g) + (tbn[2] * nTex.b));
   }
 
   void main () {
@@ -83,13 +88,20 @@
 
     vec3 mainTexWorldNormal = GetWorldNormal(normalTex, v_TBN);
 
+    if (length(normalTex.rgb) > 2.95)
+      mainTexWorldNormal = v_TBN[2];
+
     float shadowValue = ShadowCalculation();
     float lightAngle = max( dot(-u_directionLightDir, v_normal), 0.0);
 
-    if (length(v_TBN[0]) > 0.1)
-      lightAngle = max( dot(-u_directionLightDir, mainTexWorldNormal), 0.0);
-      
-    vec4 color = (u_directionLightColor * lightAngle * tex * shadowValue ) + (u_ambientLightColor * tex) * u_mainColor;
+    vec3 viewDir = normalize(u_cameraPos - vec3(v_worldVertex));
+    vec3 reflectDir = reflect(-u_directionLightDir, mainTexWorldNormal);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32.0);
+    vec4 specular = spec * u_specularLightStrength * u_directionLightColor;
+
+    lightAngle = max( dot(-u_directionLightDir, mainTexWorldNormal), 0.0);
+
+    vec4 color = ((u_directionLightColor * lightAngle * tex * shadowValue ) + (u_ambientLightColor * tex) + specular)  * u_mainColor;
     color.r = min(1.0, color.r);
     color.g = min(1.0, color.g);
     color.b = min(1.0, color.b);

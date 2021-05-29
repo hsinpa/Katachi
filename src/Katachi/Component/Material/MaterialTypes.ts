@@ -65,6 +65,8 @@ export const DefaultVertexShaderParameter = {
     modelViewProjectionMatrix : "u_MVPMatrix",
 
     //Uniform Light
+    cameraPos : "u_cameraPos",
+    specularLightStrength : "u_specularLightStrength",
     directionLightDir : "u_directionLightDir",
     directionLightColor : "u_directionLightColor",
     ambientLightColor : "u_ambientLightColor",

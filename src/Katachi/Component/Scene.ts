@@ -29,7 +29,7 @@ class Scene {
     }
 
     public RemoveShapeObj(id : string) {
-        let index = this._shapeArray.findIndex(x=>x.id = id);
+        let index = this._shapeArray.findIndex(x=>x.id == id);
 
         if (index >= 0)
             this._shapeArray.splice(index, 1);

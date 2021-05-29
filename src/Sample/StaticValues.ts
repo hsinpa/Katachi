@@ -11,5 +11,6 @@ export interface GLTFMarkoutType {
     position : number[]; //Vector3
     orientation : number[]; //Vector3
     scale : number;
+    specular : number,
     parent_id : string;
 }

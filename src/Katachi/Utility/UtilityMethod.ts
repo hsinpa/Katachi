@@ -1,7 +1,7 @@
 import {IntVector2} from './UniversalType';
 import {quat, vec3} from 'gl-matrix'
 export function Lerp(x : number, y : number, t : number) {
-    return x + (t * (y - x));
+    return (1 - t) * x + (t * y);
 }
 
 export function NormalizeByRange(target : number, min : number, max : number) {

@@ -62,13 +62,17 @@ class InputHandler {
         this._keyboardCallback = callback;
 
         window.addEventListener("keydown", e => {
-            if (e.key in KeycodeLookupTable) {
+            let lowerCaseKey = e.key.toLowerCase();
+
+            if (lowerCaseKey in KeycodeLookupTable) {
                 this.SetKeyboardState(KeycodeLookupTable[e.key], true);
             }
         } );
 
         window.addEventListener("keyup", e => {
-            if ( e.key in KeycodeLookupTable)
+            let lowerCaseKey = e.key.toLowerCase();
+
+            if (lowerCaseKey in KeycodeLookupTable)
                 this.SetKeyboardState(KeycodeLookupTable[e.key], false);
         } );
     }

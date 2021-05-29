@@ -20,7 +20,6 @@
             "id" : "glprogram@stencil_outline_material",
             "vertex" : "./glsl/basic/stencil_outline.vert",
             "fragment" : "./glsl/basic/stencil_outline.frag"
-
         }
     ]
 }

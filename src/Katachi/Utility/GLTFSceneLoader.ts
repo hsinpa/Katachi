@@ -1,10 +1,10 @@
-import GLTFShapeObject from '../Katachi/Component/Shape/GLTFShapeObject';
-import ShapeObject from '../Katachi/Component/Shape/ShapeObject';
-import Katachi from '../Katachi/Katachi';
-import {SceneLayoutType, GLTFMarkoutType} from './StaticValues';
+import GLTFShapeObject from '..//Component/Shape/GLTFShapeObject';
+import ShapeObject from '../Component/Shape/ShapeObject';
+import Katachi from '../Katachi';
+import {DefaultVertexShaderParameter} from '../Component/Material/MaterialTypes';
+import {SceneLayoutType, GLTFMarkoutType} from './UniversalType';
 
-export default class DemoSceneLoader {
-
+export default class GLTFSceneLoader {
     private gltfCache : any = {};
 
     async LoadGLTFContent(katachi : Katachi, sceneJsonConfig: SceneLayoutType) {
@@ -47,6 +47,8 @@ export default class DemoSceneLoader {
         shapeObject.transform.Scale(gltfMarkup.scale);
         shapeObject.transform.SetPosition(gltfMarkup.position[0], gltfMarkup.position[1], gltfMarkup.position[2]);
         shapeObject.transform.SetEuler(gltfMarkup.orientation[0], gltfMarkup.orientation[1], gltfMarkup.orientation[2]);
+
+        shapeObject.SetCustomUniformAttr(DefaultVertexShaderParameter.specularLightStrength, {value : gltfMarkup.specular, isMatrix : false, function : katachi.webglContext.uniform1f});
 
         katachi.scene.AddShapeObj(shapeObject);
         if (parentObject != null)
